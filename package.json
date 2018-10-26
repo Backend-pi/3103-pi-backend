@@ -1,1 +1,26 @@
-
+{
+  "name": "vuefire-analytics",
+  "version": "1.0.0",
+  "description": "Vue unit testing practice",
+  "main": "index.html",
+  "scripts": {
+    "start": "parcel index.html --open",
+    "build": "parcel build index.html",
+    "unit": "jest --config jest.conf.js --coverage",
+    "test": "npm run unit"
+  },
+  "dependencies": {
+    "vue": "2.5.17"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-jest": "^23.6.0",
+    "babel-preset-env": "^1.7.0",
+    "jest": "^23.6.0",
+    "parcel-bundler": "^1.6.1",
+    "regenerator-runtime": "^0.12.1",
+    "firebase": "^5.5.5",
+    "vue-jest": "^3.0.0"
+  },
+  "keywords": []
+}
