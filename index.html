@@ -7,12 +7,18 @@
 <body>
   <div id="app">
   
-	<ul>
-		<li>
-			hello
-		</li>
-	</ul>
+	<div>
+		hello. just testing. <br>
+		<button @click=exit()>exit</button> <br>
+		Counter {{counter}} <br>
+		<button @click=increment()>Increment</button>
+	</div>
   
   </div>
 
 </html>
+
+<script src="https://unpkg.com/vue"></script>
+<script src="https://gstatic.com/firebasejs/4.2.0/firebase.js"></script>
+<script src="https://unpkg.com/vuefire/dist/vuefire.js"></script>
+<script src="./main.js" type="module"></script>
