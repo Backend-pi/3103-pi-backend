@@ -8,7 +8,20 @@
   <div id="app">
   
 	<div>
-		hello. just testing. <br>
+		hello. just testing. select a location below. <br>
+		<li v-for="location in locations" :key="location">
+			{{location}}
+		</li>
+
+		<form>
+			<select>
+				<option v-for="location in locations" :value='location'>
+					{{location}}
+				</option>
+			</select>
+		</form>
+		
+		<button @click=enter()> enter </button>
 		<button @click=exit()>exit</button> <br>
 		Counter {{counter}} <br>
 		<button @click=increment()>Increment</button>
