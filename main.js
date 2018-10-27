@@ -1,22 +1,38 @@
-var db = firebase
-  .initializeApp({
+var db = firebase.initializeApp({
     databaseURL: "https://space-czar.firebaseio.com/"
-  })
-  .database();
+  }).database();
 
 var realtimeRef = db.ref("realtime");
 var forecastRef = db.ref("forecast");
 
-new Vue({
+var app = new Vue({
   el: "#app",
   data: {
     counter: 0,
-    location: "",
-    occupant: {}
+    locations: ["Central Library", "Mac Commons", "Study Room 1"],
+    occupant: {},
+    date: ""
     //databaseURL:
   },
   //firebase: {},
   methods: {
+    enter: function() {
+      var today = new Date();
+      var date =
+        today.getFullYear() +
+        "-" +
+        (today.getMonth() + 1) +
+        "-" +
+        today.getDate();
+      var time =
+        today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+      this.date = date;
+      realtimeRef.child(location).push({
+        // something
+        Date: ["A1234567X", time]
+      });
+    },
+    
     exit: function() {
       console.log(forecastRef.child());
       forecastRef.child(forecast[location]).push({
@@ -29,6 +45,7 @@ new Vue({
         .child(occupant)
         .remove();
     },
+    
     increment: function() {
       this.counter++;
     }
