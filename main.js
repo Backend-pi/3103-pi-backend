@@ -4,6 +4,7 @@ var db = firebase.initializeApp({
 
 var realtimeRef = db.ref("realtime");
 var forecastRef = db.ref("forecast");
+var user = db.ref("user");
 
 var app = new Vue({
   el: "#app",
@@ -48,6 +49,10 @@ var app = new Vue({
     
     increment: function() {
       this.counter++;
+    },
+
+    printData: function () {
+      console.log(user.child('0').child('hangouts'));
     }
   }
 });
