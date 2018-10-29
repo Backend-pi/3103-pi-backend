@@ -5,6 +5,17 @@
 </head>
 
 <body>
+	<script src="https://unpkg.com/vue">
+	</script>
+	<script src="https://gstatic.com/firebasejs/4.2.0/firebase.js">
+	</script>
+	<script src="https://unpkg.com/vuefire/dist/vuefire.js">
+	</script>
+	<script src="./main.js" type="module"></script>
+	<script src="https://unpkg.com/chart.js@2.7.2/dist/Chart.bundle.js">
+	</script>
+	<script src="https://unpkg.com/vue-chartkick@0.4.0">
+	</script>
   <div id="app">
   
 	<div>
@@ -20,21 +31,24 @@
 				</option>
 			</select>
 		</form>
-		
-		<button @click=enter()> enter </button>
-		<button @click=exit()>exit</button> <br>
-		Counter {{counter}} <br>
-		<button @click=increment()>Increment</button>
+		<div>
+			<button @click=enter()> enter </button>
+			<button @click=exit()>exit</button>
+		</div>
+		<div>
+			<p>Counter {{counter}}</p>
+			<button @click=increment()>Increment</button>
+		</div>
 
+		<div>
 		<button @click=printData()> click me </button>
+		<p>Pie Chart</p>
 		<pie-chart :data="hangouts"></pie-chart>
+		</div>
 	</div>
   
   </div>
 
 </html>
 
-<script src="https://unpkg.com/vue"></script>
-<script src="https://gstatic.com/firebasejs/4.2.0/firebase.js"></script>
-<script src="https://unpkg.com/vuefire/dist/vuefire.js"></script>
-<script src="./main.js" type="module"></script>
+
