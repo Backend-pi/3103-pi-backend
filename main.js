@@ -1,6 +1,8 @@
-var db = firebase.initializeApp({
+var db = firebase
+  .initializeApp({
     databaseURL: "https://space-czar.firebaseio.com/"
-  }).database();
+  })
+  .database();
 
 var realtimeRef = db.ref("realtime");
 var forecastRef = db.ref("forecast");
@@ -12,10 +14,13 @@ var app = new Vue({
     counter: 0,
     locations: ["Central Library", "Mac Commons", "Study Room 1"],
     occupant: {},
-    date: ""
+    date: "",
+    hangouts: [["Computing", 44], ["Engineering", 23], ["Science", 33]]
     //databaseURL:
   },
-  //firebase: {},
+  firebase: {
+    hangouts: user.child("0").child("hangouts")
+  },
   methods: {
     enter: function() {
       var today = new Date();
@@ -33,7 +38,7 @@ var app = new Vue({
         Date: ["A1234567X", time]
       });
     },
-    
+
     exit: function() {
       console.log(forecastRef.child());
       forecastRef.child(forecast[location]).push({
@@ -46,13 +51,14 @@ var app = new Vue({
         .child(occupant)
         .remove();
     },
-    
+
     increment: function() {
       this.counter++;
     },
 
-    printData: function () {
-      console.log(user.child('0').child('hangouts'));
+    printData: function() {
+      this.hangouts = user.child("0").child("hangouts");
+      console.log(user.child("0").child("hangouts"));
     }
   }
 });
