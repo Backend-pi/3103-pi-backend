@@ -5,48 +5,41 @@
 </head>
 
 <body>
-	<script src="https://unpkg.com/vue">
-	</script>
-	<script src="https://gstatic.com/firebasejs/4.2.0/firebase.js">
-	</script>
-	<script src="https://unpkg.com/vuefire/dist/vuefire.js">
-	</script>
+	<script src="https://unpkg.com/vue"></script>
+	<script src="https://gstatic.com/firebasejs/4.2.0/firebase.js"></script>
+	<script src="https://unpkg.com/vuefire/dist/vuefire.js"></script>
 	<script src="./main.js" type="module"></script>
-	<script src="https://unpkg.com/chart.js@2.7.2/dist/Chart.bundle.js">
-	</script>
-	<script src="https://unpkg.com/vue-chartkick@0.4.0">
-	</script>
+	<script src="https://unpkg.com/chart.js@2.7.2/dist/Chart.bundle.js"></script>
+	<script src="https://unpkg.com/vue-chartkick@0.4.0"></script>
   <div id="app">
-  
-	<div>
-		hello. just testing. select a location below. <br>
-		<li v-for="location in locations" :key="location">
+		<div>
+			hello. just testing. select a location below. <br>
+			<li v-for="location in locations" :key="location">
 			{{location}}
-		</li>
+			</li>
 
-		<form>
-			<select>
-				<option v-for="location in locations" :value='location'>
-					{{location}}
-				</option>
-			</select>
-		</form>
-		<div>
-			<button @click=enter()> enter </button>
-			<button @click=exit()>exit</button>
-		</div>
-		<div>
-			<p>Counter {{counter}}</p>
-			<button @click=increment()>Increment</button>
-		</div>
+			<form>
+				<select>
+					<option v-for="location in locations" :value='location'>
+						{{location}}
+					</option>
+				</select>
+			</form>
+			<div>
+				<button @click=enter()> enter </button>
+				<button @click=exit()>exit</button>
+			</div>
+			<div>
+				<p>Counter {{counter}}</p>
+				<button @click=increment()>Increment</button>
+			</div>
 
-		<div>
-			<button @click=printData()> click me </button>
-			<p>Pie Chart</p>
-			<pie-chart :data="hangouts"></pie-chart>
+			<div>
+				<button @click=printData()> click me </button>
+				<p>Pie Chart</p>
+				<pie-chart :data="hangouts"></pie-chart>
+			</div>
 		</div>
-	</div>
-  
   </div>
 	
 	<script>
