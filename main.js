@@ -13,15 +13,13 @@ var app = new Vue({
   data: {
     counter: 0,
     locations: ["Central Library", "Mac Commons", "Study Room 1"],
-    occupant: {},
-    date: "",
-    hangouts: [["Computing", 44], ["Engineering", 23], ["Science", 33]]
+    hangouts: ""
     //databaseURL:
   },
-  firebase: {
-    hangouts: user.child("0").child("hangouts")
-  },
   methods: {
+    increment: function() {
+      this.counter++;
+    },
     enter: function() {
       var today = new Date();
       var date =
@@ -38,7 +36,6 @@ var app = new Vue({
         Date: ["A1234567X", time]
       });
     },
-
     exit: function() {
       console.log(forecastRef.child());
       forecastRef.child(forecast[location]).push({
@@ -51,14 +48,26 @@ var app = new Vue({
         .child(occupant)
         .remove();
     },
-
-    increment: function() {
-      this.counter++;
-    },
-
     printData: function() {
       this.hangouts = user.child("0").child("hangouts");
       console.log(user.child("0").child("hangouts"));
+    },
+    get: function() {
+      var arr = [];
+      user
+        .child("0")
+        .child("hangouts")
+        .once("value", function(openHangouts) {
+          openHangouts.forEach(function(openHangouts) {
+            var val = openHangouts.val();
+            var temp = [openHangouts.key, openHangouts.val()];
+            console.log(temp);
+            arr.push([openHangouts.key, openHangouts.val()]);
+          });
+          console.log(arr);
+        });
+      this.hangouts = arr;
+      return arr;
     }
   }
 });
