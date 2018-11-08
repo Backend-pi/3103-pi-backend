@@ -68,6 +68,14 @@ var app = new Vue({
         });
       this.hangouts = arr;
       return arr;
+    }, 
+    update_data: function (location, date, time, occupancy) {
+      fetch(this.databaseURL, {
+        method: "put",
+        body: Json.stringify({
+          forecast: { location: { Data: { date: { time: occupancy } } } }
+        })
+      })
     }
   }
 });
