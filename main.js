@@ -69,13 +69,17 @@ var app = new Vue({
       this.hangouts = arr;
       return arr;
     }, 
-    update_data: function (location, date, time, occupancy) {
-      fetch(this.databaseURL, {
-        method: "put",
-        body: Json.stringify({
-          forecast: { location: { Data: { date: { time: occupancy } } } }
-        })
-      })
+    update_data: async function () {
+      //uncomment below when testing
+      //var location = "Central Library"
+      //var date = "26102018"
+      //var pax = 500
+      //var time = 1700
+      forecastRef
+        .child(location)
+        .child("Data")
+        .child(date)
+        .update({ [time]: pax})
     }
   }
 });
