@@ -69,7 +69,7 @@ var app = new Vue({
       this.hangouts = arr;
       return arr;
     }, 
-    update_data: async function () {
+    update_data: async function (location, date, time, pax) {
       //uncomment below when testing
       //var location = "Central Library"
       //var date = "26102018"
