@@ -172,7 +172,7 @@ var app = new Vue({
         const self = this;
         interval = setInterval(function() {
           self.createRandom();
-        }, 2000);
+        }, 3600000);
         console.log("setInterval");
       } else {
         clearInterval(interval);
