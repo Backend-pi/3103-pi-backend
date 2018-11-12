@@ -1,64 +1,58 @@
 <html>
+  <head>
+    <title>Testing Backend</title>
+  </head>
 
-<head>
-	<title>Testing Backend</title>
-</head>
+  <body>
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://gstatic.com/firebasejs/4.2.0/firebase.js"></script>
+    <script src="https://unpkg.com/vuefire/dist/vuefire.js"></script>
+    <script src="./main.js" type="module"></script>
+    <script src="https://unpkg.com/chart.js@2.7.2/dist/Chart.bundle.js"></script>
+    <script src="https://unpkg.com/vue-chartkick@0.4.0"></script>
+    <div id="app">
+      <div>
+        hello. just testing. select a location below. <br />
+        <li v-for="location in locations" :key="location">{{location}}</li>
 
-<body>
-	<script src="https://unpkg.com/vue"></script>
-	<script src="https://gstatic.com/firebasejs/4.2.0/firebase.js"></script>
-	<script src="https://unpkg.com/vuefire/dist/vuefire.js"></script>
-	<script src="./main.js" type="module"></script>
-	<script src="https://unpkg.com/chart.js@2.7.2/dist/Chart.bundle.js"></script>
-	<script src="https://unpkg.com/vue-chartkick@0.4.0"></script>
-  <div id="app">
-		<div>
-			hello. just testing. select a location below. <br>
-			<li v-for="location in locations" :key="location">
-			{{location}}
-			</li>
+        <form>
+          <select>
+            <option v-for="location in locations" :value="location">
+              {{location}}
+            </option>
+          </select>
+        </form>
+        <div>
+          <button @click="enter()">enter</button>
+          <button @click="exit()">exit</button>
+          <button @click="update_data()">Update Data</button>
+          <button @click="startRandomTime()">Start</button>
+          <button @click="stopRandomTime()">Stop</button>
+        </div>
+        <div>
+          <p>Counter {{counter}}</p>
+          <button @click="increment()">Increment</button>
+        </div>
 
-			<form>
-				<select>
-					<option v-for="location in locations" :value='location'>
-						{{location}}
-					</option>
-				</select>
-			</form>
-			<div>
-				<button @click=enter()> enter </button>
-				<button @click=exit()>exit</button>
-				<button @click=update_data()>Update Data</button>
-			</div>
-			<div>
-				<p>Counter {{counter}}</p>
-				<button @click=increment()>Increment</button>
-			</div>
-
-			<div>
-				<button @click=printData()> click me </button>
-				<p>Pie Chart</p>
-				<pie-chart :data=get()></pie-chart>
-			</div>
-		</div>
-  </div>
-	<!--
-	<script>
-		 var app = new Vue({ 
-			 el: "#app", 
-			 data: { 
-				 counter: 0, 
-				 locations: ["Central Library", "Mac Commons", "Study Room 1"],
-				 hangouts: [["Computing", 44], ["Engineering", 23], ["Science", 33]] 
-				//databaseURL: 
-			}
-		})
-	</script>
-	-->
-
-</body>
-	
+        <div>
+          <button @click="printData()">click me</button>
+          <p>Pie Chart</p>
+          <pie-chart :data="get()"></pie-chart>
+        </div>
+      </div>
+    </div>
+    <!--
+      <script>
+      	 var app = new Vue({
+      		 el: "#app",
+      		 data: {
+      			 counter: 0,
+      			 locations: ["Central Library", "Mac Commons", "Study Room 1"],
+      			 hangouts: [["Computing", 44], ["Engineering", 23], ["Science", 33]]
+      			//databaseURL:
+      		}
+      	})
+      </script>
+    -->
+  </body>
 </html>
-
-
-
