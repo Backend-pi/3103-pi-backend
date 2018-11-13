@@ -80,21 +80,37 @@ var app = new Vue({
       this.hangouts = arr;
       return arr;
     },
-    update_data: async function(region, location, room, date, time, pax) {
+    //update_data: helps store historical data for forecasting
+    update_data: async function(location, date, time, pax) {
       //uncomment below when testing
-      //var region = "General"
       //var location = "Central Library"
-      //var room = "Discussion rooms"
-      //var date = "27102018"
-      //var pax = 2
+      //var date = "26102018"
+      //var pax = 500
       //var time = 1700
       forecastRef
-        .child(region)
+        .child("General")
         .child(location)
-        .child(room)
+        .child("study rooms")
         .child("Data")
         .child(date)
         .update({ [time]: pax });
+    },
+    //formatDate: takes in date objects and converts them into required
+    //string format for storing into firebase
+    formatDate: function(date) {
+      //date = new Date();
+      //date.setDate(date.getDate() - 7);
+      var format_date =
+        date.getDate().toString() +
+        (date.getMonth() + 1).toString() +
+        date.getFullYear().toString();
+      return format_date;
+    },
+    //formatTime: takes in date objects and converts them into required string
+    //format for storing into firebase
+    formatTime: function(date) {
+      var format_time = date.getHours().toString() + "00";
+      return format_time;
     },
     createRandom: function() {
       var date = this.getTodayDate();
