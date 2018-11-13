@@ -6,6 +6,7 @@ var db = firebase
 
 var realtimeRef = db.ref("realtime");
 var forecastRef = db.ref("forecast");
+var bookingsRef = db.ref("bookings");
 var user = db.ref("user");
 var interval;
 
@@ -329,17 +330,22 @@ var app = new Vue({
                 if (day == userDate) {
                   // if user wants this date, loop through the diff times of this date
                   // check that for the time the user wants, the number of rooms available
+                  /*
                   if (!(userTime in currTimeKey)) {
                     // if that time is free
                     // store the data!
                     tempCount += 1;
                     location = loc;
-                  }
-                  /* // to use if each hour is stored, those without bookings are stored as ""
+                  } */
+                  // to use if each hour is stored, those without bookings are stored as ""
                   currTimeKey.forEach(function(time) {
-                    // 
-                    if (){}
-                  }); */
+                    var value = openBookings.child(loc).child(room).child(day).child(time).val();
+                    //console.log(value); // "" or nusnetID
+                    if (value == ""){
+                      tempCount += 1;
+                      location = loc;
+                    }
+                  });
                 }
               });
             });
