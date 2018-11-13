@@ -16,13 +16,16 @@ var app = new Vue({
     occupancy: [0],
     locations: ["Central Library", "Mac Commons", "Study Room 1"],
     hangouts: "",
-    timeOn: true
+    timeOn: true,
+    tempVal: "",
+    bookings: ""
     //databaseURL:
   },
   methods: {
     increment: function() {
       this.counter++;
     },
+    // get today's date DDMMYYYY
     getTodayDate: function() {
       var today = new Date();
       var date =
@@ -33,6 +36,7 @@ var app = new Vue({
         today.getFullYear();
       return date;
     },
+    // get current time in terms of hour HH00
     getMyTime: function() {
       var today = new Date();
       var time =
@@ -64,6 +68,7 @@ var app = new Vue({
       this.hangouts = user.child("0").child("hangouts");
       console.log(user.child("0").child("hangouts"));
     },
+    // get data for hangouts pie chart
     get: function() {
       var arr = [];
       user
@@ -139,6 +144,7 @@ var app = new Vue({
       console.log(temp);
       //return temp[0];
     },
+    // generate random values, push current value from realtime to forecast, push new value to realtime
     createRandom: function() {
       var date = this.getTodayDate();
       var time = this.getMyTime();
@@ -210,6 +216,7 @@ var app = new Vue({
       //var x = Math.floor(Math.random() * 100 + 1);
       //console.log(x);
     },
+    // timer to run random number generator
     randomTime: function() {
       if (this.timeOn) {
         const self = this;
@@ -222,14 +229,61 @@ var app = new Vue({
         console.log("clearInterval");
       }
     },
+    // start the timer
     startRandomTime: function() {
       this.timeOn = true;
       this.randomTime();
     },
+    // stop the timer
     stopRandomTime: function() {
       this.timeOn = false;
       this.randomTime();
     }
-    //},
-  }
+  },
+  // retrieve data to get it to show on html
+  tempFn: function() { 
+      var temp = [];
+      realtimeRef
+        .child("General")
+        .child("Central Library")
+        .child("discussion rooms")
+        .once("value", function(snapshot1) {
+          temp.push(snapshot1.child("total").val());
+          //console.log(snapshot1.child("total").val());
+          console.log(temp);
+        });
+      this.tempVal = temp;
+      //console.log(temp);
+      //return temp;
+    },
+    // retrieve bookings data and store it as dictionary for display on html
+    displayBookings() {
+      var arr = [];
+      user
+        .child("0")
+        .child("bookings")
+        .once("value", function(openBookings) {
+          openBookings.forEach(function(openBookings) {
+            // openBookings is the date
+            var date = openBookings.key;
+            var obj = openBookings.val();
+            //console.log(date); //16112018
+            //console.log(obj); //Object {1300-1400: "COM1 DR4"}
+            var keys = Object.keys(obj);
+            //console.log(keys) // array of timings
+            var temp = {};
+            temp.date = date;
+            keys.forEach(function(time) {
+              //console.log(time); // 1300-1400
+              var place = openBookings.child(time).val();
+              //console.log(place); // location of booking
+              temp.time = time;
+              temp.location = place;
+            });
+            arr.push(temp);
+          });
+        });
+      this.bookings = arr;
+      return arr;
+    },
 });
