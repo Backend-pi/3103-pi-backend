@@ -238,10 +238,9 @@ var app = new Vue({
     stopRandomTime: function() {
       this.timeOn = false;
       this.randomTime();
-    }
-  },
-  // retrieve data to get it to show on html
-  tempFn: function() { 
+    },
+    // retrieve data to get it to show on html
+    tempFn: function() { 
       var temp = [];
       realtimeRef
         .child("General")
@@ -286,4 +285,6 @@ var app = new Vue({
       this.bookings = arr;
       return arr;
     },
+  },
+  
 });
