@@ -16,6 +16,7 @@
         <li v-for="location in locations" :key="location">{{location}}</li>
 
         <form>
+		<h4> Form </h4>
           <select>
             <option v-for="location in locations" :value="location">
               {{location}}
@@ -23,21 +24,28 @@
           </select>
         </form>
         <div>
-          <button @click="enter()">enter</button>
-          <button @click="exit()">exit</button>
-          <button @click="update_data()">Update Data</button>
-          <button @click="startRandomTime()">Start</button>
-          <button @click="stopRandomTime()">Stop</button>
+		<h4> All about buttons </h4>
+        	<button @click="enter()">enter</button>
+        	<button @click="exit()">exit</button>
+        	<button @click="update_data()">Update Data</button>
+        	<button @click="startRandomTime()">Start</button>
+        	<button @click="stopRandomTime()">Stop</button>
         </div>
         <div>
-          <p>Today's Date: {{formatDate(new Date())}}</p>
-          <p>Three Weeks Ago: {{formatDate(new Date())}}</p>
-          <p>Current Hour: {{formatTime(new Date())}}</p>
-          <p>Seats Taken: {{occupancy[occupancy.length-1]}}</p>
-          <p>Counter {{counter}}</p>
-          <button @click="increment">Increment</button>
-          <button @click="occupied()">Vacancies</button>
+		<h4> About Dates and Occupancy </h4>
+        	<p>Today's Date: {{formatDate(new Date())}}</p>
+        	<p>Three Weeks Ago: {{formatDate(new Date())}}</p>
+        	<p>Current Hour: {{formatTime(new Date())}}</p>
+		<p>Seats Taken: {{occupancy[occupancy.length-1]}}</p>
+        	<button @click="occupied()">Vacancies</button>
         </div>
+	
+	<div> 
+		<h4> le wild counter </h4>
+		(Added for testing)
+		<p>Counter {{counter}}</p>
+        	<button @click="increment">Increment</button>
+	</div>
 
         <div>
 		<p>
@@ -61,7 +69,7 @@
         
         <div>
           <button @click="printData()">click me</button>
-          <p>Pie Chart</p>
+          <h4>Pie Chart</h4>
           <pie-chart :data="get()"></pie-chart>
         </div>
       </div>
