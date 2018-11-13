@@ -30,15 +30,30 @@
           <button @click="stopRandomTime()">Stop</button>
         </div>
         <div>
-          <p>Counter {{counter}}</p>
           <p>Today's Date: {{formatDate(new Date())}}</p>
           <p>Three Weeks Ago: {{formatDate(new Date())}}</p>
           <p>Current Hour: {{formatTime(new Date())}}</p>
           <p>Seats Taken: {{occupancy[occupancy.length-1]}}</p>
-          <button @click="increment()">Increment</button>
+          <p>Counter {{counter}}</p>
+          <button @click="increment">Increment</button>
           <button @click="occupied()">Vacancies</button>
         </div>
 
+        <div>
+					<p>
+						<button @click="displayBookings">Test Display Bookings</button>
+						Display bookings
+						<li v-for="booking in bookings">
+							{{ booking.date }}
+						</li>
+					</p>
+          
+          <p> 
+					  <button @click="tempFn()"> TempFn </button> 
+					  Returned Value from firebase: {{ tempVal[tempVal.length-1] }} 
+				  </p>
+				</div>
+        
         <div>
           <button @click="printData()">click me</button>
           <p>Pie Chart</p>
