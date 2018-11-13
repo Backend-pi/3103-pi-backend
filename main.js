@@ -7,7 +7,7 @@ var db = firebase
 var realtimeRef = db.ref("realtime");
 var forecastRef = db.ref("forecast");
 var bookingsRef = db.ref("bookings");
-var user = db.ref("user");
+var userRef = db.ref("user");
 var interval;
 
 var app = new Vue({
@@ -67,13 +67,13 @@ var app = new Vue({
         .remove();
     },
     printData: function() {
-      this.hangouts = user.child("0").child("hangouts");
-      console.log(user.child("0").child("hangouts"));
+      this.hangouts = userRef.child("0").child("hangouts");
+      console.log(userRef.child("0").child("hangouts"));
     },
     // get data for hangouts pie chart
     get: function() {
       var arr = [];
-      user
+      userRef
         .child("0")
         .child("hangouts")
         .once("value", function(openHangouts) {
@@ -260,7 +260,7 @@ var app = new Vue({
     // retrieve user's bookings data and store it as dictionary for display on html
     displayBookings() {
       var arr = [];
-      user
+      userRef
         .child("0")
         .child("bookings")
         .once("value", function(openBookings) {
