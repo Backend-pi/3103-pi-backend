@@ -13,6 +13,7 @@ var app = new Vue({
   el: "#app",
   data: {
     counter: 0,
+    occupancy: [0],
     locations: ["Central Library", "Mac Commons", "Study Room 1"],
     hangouts: "",
     timeOn: true
