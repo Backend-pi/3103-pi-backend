@@ -112,6 +112,32 @@ var app = new Vue({
       var format_time = date.getHours().toString() + "00";
       return format_time;
     },
+    //occupancy: finds the no. of occupants in a given location, time and date
+    //formatDate: the date has been formated in the required form. Pass a date
+    //object through formatDate before using this
+    occupied: function() {
+      //uncommment below when testing
+      var location = "Central Library";
+      var formatDate = "26102018";
+      var time = 1600;
+      var temp = [];
+      forecastRef
+        .child("General")
+        .child(location)
+        .child("study rooms")
+        .child("Data")
+        .child(formatDate)
+        .child(time)
+        .once("value", function(snap) {
+          //console.log(snap.val());
+          temp.push(snap.val());
+          console.log(temp);
+        });
+      this.occupancy = temp;
+      console.log("outside");
+      console.log(temp);
+      //return temp[0];
+    },
     createRandom: function() {
       var date = this.getTodayDate();
       var time = this.getMyTime();
