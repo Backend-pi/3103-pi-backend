@@ -31,7 +31,12 @@
         </div>
         <div>
           <p>Counter {{counter}}</p>
+          <p>Today's Date: {{formatDate(new Date())}}</p>
+          <p>Three Weeks Ago: {{formatDate(new Date())}}</p>
+          <p>Current Hour: {{formatTime(new Date())}}</p>
+          <p>Seats Taken: {{occupancy[occupancy.length-1]}}</p>
           <button @click="increment()">Increment</button>
+          <button @click="occupied()">Vacancies</button>
         </div>
 
         <div>
