@@ -273,16 +273,16 @@ var app = new Vue({
             //console.log(obj); //Object {1300-1400: "COM1 DR4"}
             var keys = Object.keys(obj);
             //console.log(keys) // array of timings
-            var temp = {};
-            temp.date = date;
             keys.forEach(function(time) {
               //console.log(time); // 1300-1400
+              var temp = {}
               var place = openBookings.child(time).val();
               //console.log(place); // location of booking
+              temp.date = date;
               temp.time = time;
               temp.location = place;
+              arr.push(temp)
             });
-            arr.push(temp);
           });
         });
       this.myBookings = arr;
