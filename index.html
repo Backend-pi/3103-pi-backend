@@ -1,18 +1,29 @@
 <html>
-  <head>
-    <title>Testing Backend</title>
-  </head>
 
-  <body>
-    <script src="https://unpkg.com/vue"></script>
-    <script src="https://gstatic.com/firebasejs/4.2.0/firebase.js"></script>
-    <script src="https://unpkg.com/vuefire/dist/vuefire.js"></script>
-    <script src="./main.js" type="module"></script>
-    <script src="https://unpkg.com/chart.js@2.7.2/dist/Chart.bundle.js"></script>
-    <script src="https://unpkg.com/vue-chartkick@0.4.0"></script>
-    <div id="app">
-      <div>
-        hello. just testing. select a location below. <br />
+<head>
+	<title>Testing Backend</title>
+</head>
+
+<body>
+	<script src="https://unpkg.com/vue">
+
+	</script>
+	<script src="https://gstatic.com/firebasejs/4.2.0/firebase.js">
+
+	</script>
+	<script src="https://unpkg.com/vuefire/dist/vuefire.js">
+
+	</script>
+	<script src="./main.js" type="module"></script>
+	<script src="https://unpkg.com/chart.js@2.7.2/dist/Chart.bundle.js">
+
+	</script>
+	<script src="https://unpkg.com/vue-chartkick@0.4.0">
+
+	</script>
+	<div id="app">
+		<div>
+			hello. just testing. select a location below. <br />
         <li v-for="location in locations" :key="location">{{location}}</li>
 
         <h4>Form</h4>
@@ -43,29 +54,37 @@
         </div>
 
         <div>
-          <h4>le wild counter (Added for testing)</h4>
+          <h4>le wild counter (added for testing)</h4>
           <p>Counter {{counter}}</p>
           <button @click="increment">Increment</button>
         </div>
 
         <div>
           <h4>About Bookings</h4>
-          <button @click="displayBookings">Test Display myBookings</button>
+          <button @click="displayBookings">Display myBookings</button>
           Display bookings
           <li v-for="myBooking in myBookings">{{ myBooking.date }}</li>
 
-          <br />
+          <br>
 
           <button @click="bookingsAvail">Bookings Avail</button> Display
           bookings available
           <li v-for="booking in bookings">{{ booking }}</li>
 
-          <br />
+          <br>
 
           <button @click="makeBooking">Make Booking</button>
 					 my bookings
 					<li v-for="myBooking in myBookings">{{ myBooking }}</li>
 
+          <br>
+          <button @click="cancelBooking">cancel booking</button>
+        </div>
+
+        <div>
+          <h4> Others </h4>
+		      <button @click="getRegionfromLoc">getRegionfromLoc</button>
+		      <button @click="getRegionfromBooking">getRegionfromBooking</button>
           <p>
             <button @click="tempFn()">TempFn</button> Returned Value from
             firebase: {{ tempVal[tempVal.length-1] }}
@@ -73,7 +92,7 @@
         </div>
 
         <div>
-          <button @click="printData()">click me</button>
+          <button @click="printData()">click me not</button>
           <h4>Pie Chart</h4>
           <pie-chart :data="get()"></pie-chart>
         </div>
