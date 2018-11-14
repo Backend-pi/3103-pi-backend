@@ -15,7 +15,7 @@
         hello. just testing. select a location below. <br />
         <li v-for="location in locations" :key="location">{{location}}</li>
 
-				<h4> Form </h4>
+        <h4>Form</h4>
         <form>
           <select>
             <option v-for="location in locations" :value="location">
@@ -25,47 +25,53 @@
         </form>
 
         <div>
-					<h4> All about buttons </h4>
-        	<button @click="enter()">enter</button>
-        	<button @click="exit()">exit</button>
-        	<button @click="update_data()">Update Data</button>
-        	<button @click="startRandomTime()">Start</button>
-        	<button @click="stopRandomTime()">Stop</button>
+          <h4>All about buttons</h4>
+          <button @click="enter()">enter</button>
+          <button @click="exit()">exit</button>
+          <button @click="update_data()">Update Data</button>
+          <button @click="startRandomTime()">Start</button>
+          <button @click="stopRandomTime()">Stop</button>
         </div>
-        
-				<div>
-					<h4> About Dates and Occupancy </h4>
-        	<p>Today's Date: {{formatDate(new Date())}}</p>
-        	<p>Three Weeks Ago: {{formatDate(new Date())}}</p>
-        	<p>Current Hour: {{formatTime(new Date())}}</p>
-					<p>Seats Taken: {{occupancy[occupancy.length-1]}}</p>
-        	<button @click="occupied()">Vacancies</button>
-        </div>
-	
-				<div> 
-					<h4> le wild counter (Added for testing) </h4>
-					<p>Counter {{counter}}</p>
-    			<button @click="increment">Increment</button>
-				</div>
 
         <div>
-					<h4> About Bookings </h4>
-					<button @click="displayBookings">Test Display myBookings</button>
-						Display bookings
-					<li v-for="myBooking in myBookings">
-						{{ myBooking.date }}
-					</li>
-			
-					<button @click="bookingsAvail">Bookings Avail</button> 
-						Display bookings available
+          <h4>About Dates and Occupancy</h4>
+          <p>Today's Date: {{formatDate(new Date())}}</p>
+          <p>Three Weeks Ago: {{formatDate(new Date())}}</p>
+          <p>Current Hour: {{formatTime(new Date())}}</p>
+          <p>Seats Taken: {{occupancy[occupancy.length-1]}}</p>
+          <button @click="occupied()">Vacancies</button>
+        </div>
+
+        <div>
+          <h4>le wild counter (Added for testing)</h4>
+          <p>Counter {{counter}}</p>
+          <button @click="increment">Increment</button>
+        </div>
+
+        <div>
+          <h4>About Bookings</h4>
+          <button @click="displayBookings">Test Display myBookings</button>
+          Display bookings
+          <li v-for="myBooking in myBookings">{{ myBooking.date }}</li>
+
+          <br />
+
+          <button @click="bookingsAvail">Bookings Avail</button> Display
+          bookings available
           <li v-for="booking in bookings">{{ booking }}</li>
-		
-       		<p> 
-						<button @click="tempFn()"> TempFn </button> 
-							Returned Value from firebase: {{ tempVal[tempVal.length-1] }} 
-					</p>
-				</div>
-        
+
+          <br />
+
+          <button @click="updateUserBooking">Update Booking</button>
+					 my bookings
+					<li v-for="myBooking in myBookings">{{ myBooking }}</li>
+
+          <p>
+            <button @click="tempFn()">TempFn</button> Returned Value from
+            firebase: {{ tempVal[tempVal.length-1] }}
+          </p>
+        </div>
+
         <div>
           <button @click="printData()">click me</button>
           <h4>Pie Chart</h4>
