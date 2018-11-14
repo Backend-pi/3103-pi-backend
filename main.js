@@ -15,7 +15,7 @@ var app = new Vue({
   data() {
     return {
       counter: 0,
-      occupancy: [0],
+      occupancy: 0,
       locations: ["Central Library", "Mac Commons", "Study Room 1"],
       userName: "",
       hangouts: "",
@@ -167,13 +167,10 @@ var app = new Vue({
         var num = await this.occupied(location, formatedDate, time);
         console.log(num[0]);
         total = total + num[0];
-        //console.log(total);
-        if (i==3) {
-          
-        }
+        //console.log(total)
       }
       console.log(total);
-      this.occupancy = total;
+      this.occupancy = Math.floor(total/3);
       //console.log(this.occupancy);
       return total;
       //var time = this.formatTime(date); //find the hour of the date object
