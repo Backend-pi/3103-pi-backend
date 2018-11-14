@@ -154,7 +154,7 @@ var app = new Vue({
 
     //forecasting model: the model takes in a string location, and a date object
     forecast: async function(location, time) { //change to date, instead of time when done with testing
-      const date = new Date(2018, 11, 12, 22, 00, 30, 0);
+      const date = new Date(2018, 11, 12, 22, 0, 30, 0);
       var i;
       var total = 0;
       var time = 2200; //can be derived from date later on
@@ -185,7 +185,7 @@ var app = new Vue({
       //}
       //var avg = total / 4;
       //return avg;
-    }
+    },
     // generate random values, push current value from realtime to forecast, push new value to realtime
     createRandom: function () {
       var date = this.getTodayDate();
