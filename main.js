@@ -12,24 +12,28 @@ var interval;
 
 var app = new Vue({
   el: "#app",
-  data: {
-    counter: 0,
-    occupancy: [0],
-    locations: ["Central Library", "Mac Commons", "Study Room 1"],
-    userName: "",
-    hangouts: "",
-    timeOn: true,
-    tempVal: "",
-    myBookings: "", // users personal bookings
-    bookings: "" // places that are available to show on html so user can choose which location they want
-    //databaseURL:
+  data() {
+    return {
+      counter: 0,
+      occupancy: [0],
+      locations: ["Central Library", "Mac Commons", "Study Room 1"],
+      userName: "",
+      hangouts: "",
+      timeOn: true,
+      tempVal: "",
+      myBookings: "", // users personal bookings
+      bookings: "", // places that are available to show on html so user can choose which location they want
+      region: ""
+      //databaseURL:
+    };
   },
+  mounted() { this.getRegionfromLoc() },
   methods: {
-    increment: function() {
+    increment: function () {
       this.counter++;
     },
     // get today's date DDMMYYYY
-    getTodayDate: function() {
+    getTodayDate: function () {
       var today = new Date();
       var date =
         today.getDate() +
@@ -40,7 +44,7 @@ var app = new Vue({
       return date;
     },
     // get current time in terms of hour HH00
-    getMyTime: function() {
+    getMyTime: function () {
       var today = new Date();
       var time =
         //today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
@@ -48,14 +52,14 @@ var app = new Vue({
         today.getHours() + "00";
       return time;
     },
-    enter: function(region, location, room, pax) {
+    enter: function (region, location, room, pax) {
       realtimeRef
         .child(region)
         .child(location)
         .child(room)
         .update({ "in use": pax });
     },
-    exit: function() {
+    exit: function () {
       console.log(forecastRef.child());
       forecastRef.child(forecast[location]).push({
         //Data: this.occupant // mot sure if correct
@@ -67,18 +71,18 @@ var app = new Vue({
         .child("in use")
         .remove();
     },
-    printData: function() {
+    printData: function () {
       this.hangouts = userRef.child("0").child("hangouts");
       console.log(userRef.child("0").child("hangouts"));
     },
     // get data for hangouts pie chart
-    get: function() {
+    get: function () {
       var arr = [];
       userRef
         .child("0")
         .child("hangouts")
-        .once("value", function(openHangouts) {
-          openHangouts.forEach(function(openHangouts) {
+        .once("value", function (openHangouts) {
+          openHangouts.forEach(function (openHangouts) {
             var val = openHangouts.val();
             var temp = [openHangouts.key, openHangouts.val()];
             console.log(temp);
@@ -90,7 +94,7 @@ var app = new Vue({
       return arr;
     },
     //update_data: helps store historical data for forecasting
-    update_data: async function(location, date, time, pax) {
+    update_data: async function (location, date, time, pax) {
       //uncomment below when testing
       //var location = "Central Library"
       //var date = "26102018"
@@ -106,7 +110,7 @@ var app = new Vue({
     },
     //formatDate: takes in date objects and converts them into required
     //string format for storing into firebase
-    formatDate: function(date) {
+    formatDate: function (date) {
       //date = new Date();
       //date.setDate(date.getDate() - 7);
       var format_date =
@@ -117,14 +121,14 @@ var app = new Vue({
     },
     //formatTime: takes in date objects and converts them into required string
     //format for storing into firebase
-    formatTime: function(date) {
+    formatTime: function (date) {
       var format_time = date.getHours().toString() + "00";
       return format_time;
     },
     //occupancy: finds the no. of occupants in a given location, time and date
     //formatDate: the date has been formated in the required form. Pass a date
     //object through formatDate before using this
-    occupied: function() {
+    occupied: function () {
       //uncommment below when testing
       var location = "Central Library";
       var formatDate = "26102018";
@@ -137,7 +141,7 @@ var app = new Vue({
         .child("Data")
         .child(formatDate)
         .child(time)
-        .once("value", function(snap) {
+        .once("value", function (snap) {
           //console.log(snap.val());
           temp.push(snap.val());
           console.log(temp);
@@ -148,12 +152,12 @@ var app = new Vue({
       //return temp[0];
     },
     // generate random values, push current value from realtime to forecast, push new value to realtime
-    createRandom: function() {
+    createRandom: function () {
       var date = this.getTodayDate();
       var time = this.getMyTime();
-      realtimeRef.once("value", function(snapshot) {
+      realtimeRef.once("value", function (snapshot) {
         //console.log(snapshot.val());
-        snapshot.forEach(function(snapshot) {
+        snapshot.forEach(function (snapshot) {
           // for each region (snapshot is the region)
           var region = snapshot.key;
           console.log(region);
@@ -162,10 +166,10 @@ var app = new Vue({
           var key = Object.keys(obj);
           console.log(key);
           // for each location (loc is the location)
-          key.forEach(function(loc) {
+          key.forEach(function (loc) {
             console.log(loc);
             // for each child node in each location
-            snapshot.child(loc).forEach(function(locSnapshot) {
+            snapshot.child(loc).forEach(function (locSnapshot) {
               // check if discussion rooms/study rooms node exists
               if (locSnapshot.key == "discussion rooms") {
                 console.log("disc");
@@ -220,10 +224,10 @@ var app = new Vue({
       //console.log(x);
     },
     // timer to run random number generator
-    randomTime: function() {
+    randomTime: function () {
       if (this.timeOn) {
         const self = this;
-        interval = setInterval(function() {
+        interval = setInterval(function () {
           self.createRandom();
         }, 3600000);
         console.log("setInterval");
@@ -233,23 +237,23 @@ var app = new Vue({
       }
     },
     // start the timer
-    startRandomTime: function() {
+    startRandomTime: function () {
       this.timeOn = true;
       this.randomTime();
     },
     // stop the timer
-    stopRandomTime: function() {
+    stopRandomTime: function () {
       this.timeOn = false;
       this.randomTime();
     },
     // retrieve data to get it to show on html
-    tempFn: function() {
+    tempFn: function () {
       var temp = [];
       realtimeRef
         .child("General")
         .child("Central Library")
         .child("study rooms")
-        .once("value", function(snapshot1) {
+        .once("value", function (snapshot1) {
           temp.push(snapshot1.child("total").val());
           //console.log(snapshot1.child("total").val());
           console.log(temp);
@@ -261,28 +265,38 @@ var app = new Vue({
     // retrieve user's bookings data and store it as dictionary for display on html
     displayBookings() {
       var arr = [];
+      var passed = [];
       userRef
         .child("0")
         .child("bookings")
-        .once("value", function(openBookings) {
-          openBookings.forEach(function(openBookings) {
+        .once("value", function (openBookings) {
+          openBookings.forEach(function (openBookings) {
             // openBookings is the date
             var date = openBookings.key;
-            var obj = openBookings.val();
             //console.log(date); //16112018
-            //console.log(obj); //Object {1300-1400: "COM1 DR4"}
-            var keys = Object.keys(obj);
-            //console.log(keys) // array of timings
-            keys.forEach(function(time) {
-              //console.log(time); // 1300-1400
-              var temp = {}
-              var place = openBookings.child(time).val();
-              //console.log(place); // location of booking
-              temp.date = date;
-              temp.time = time;
-              temp.location = place;
-              arr.push(temp)
-            });
+            var formatted = date.slice(2, 4) + "/" + date.slice(0, 2) + "/" + date.slice(4, 8);
+            var formatted = new Date(formatted);
+            var now = new Date();
+            now.setHours(0, 0, 0, 0);
+            if (formatted < now) {
+              passed.push(date);
+              //console.log(passed);
+            } else {
+              var obj = openBookings.val();
+              //console.log(obj); //Object {1300-1400: "COM1 DR4"}
+              var keys = Object.keys(obj);
+              //console.log(keys) // array of timings
+              keys.forEach(function (time) {
+                //console.log(time); // 1300-1400
+                var temp = {}
+                var place = openBookings.child(time).val();
+                //console.log(place); // location of booking
+                temp.date = date;
+                temp.time = time;
+                temp.location = place;
+                arr.push(temp)
+              });
+            }
           });
         });
       this.myBookings = arr;
@@ -294,9 +308,9 @@ var app = new Vue({
       var userDate = "15112018";
       var userTime = "1400";
       var arr = [];
-      bookingsRef.once("value", function(openBookings) {
+      bookingsRef.once("value", function (openBookings) {
         // gets the region
-        openBookings.forEach(function(openBookings) {
+        openBookings.forEach(function (openBookings) {
           console.log(openBookings.val()); //Object {Central Library: Object}
           var obj = openBookings.val();
           var key = Object.keys(obj);
@@ -305,13 +319,13 @@ var app = new Vue({
           var location = "";
           var tempCount = 0; // store the # of rooms available for each loc
           var temp = {};
-          key.forEach(function(loc) {
+          key.forEach(function (loc) {
             console.log(openBookings.child(loc).val()); //Object {DR1: Object, DR2: Object}
             var rooms = openBookings.child(loc).val();
             var roomKey = Object.keys(rooms);
             console.log(roomKey); //["DR1", "DR2"]
             // loop through each discussion room
-            roomKey.forEach(function(room) {
+            roomKey.forEach(function (room) {
               var currDate = openBookings
                 .child(loc)
                 .child(room)
@@ -319,7 +333,7 @@ var app = new Vue({
               var storedDate = Object.keys(currDate);
               console.log(storedDate); //["15112018"]
               // loop through each date
-              storedDate.forEach(function(day) {
+              storedDate.forEach(function (day) {
                 var currTime = openBookings
                   .child(loc)
                   .child(room)
@@ -340,7 +354,7 @@ var app = new Vue({
                     location = loc;
                   } */
                   // to use if each hour is stored, those without bookings are stored as ""
-                  currTimeKey.forEach(function(time) {
+                  currTimeKey.forEach(function (time) {
                     if (time == userTime) {
                       var value = openBookings
                         .child(loc)
@@ -369,22 +383,25 @@ var app = new Vue({
     },
     // to be used when user makes a booking
     // takes in the user, date, time, location, region of booking
-    makeBooking(bdate, btime, bloc, bregion) {
+    makeBooking: function (bdate, btime, bloc, bregion) {
       var bdate = "15112018";
       var btime = "1400";
       var bloc = "Central Library";
-      var bregion = "General";
+      var bregion = this.region;
       var self = this;
+      //console.log(this.region);
       var availRoom = [];
       var temp = {};
       // retrieve available room from bloc
+      //var bregion = //this.getRegionfromLoc(bloc).then(() => {
       bookingsRef
         .child(bregion)
         .child(bloc)
-        .once("value", function(snapshot) {
+        .once("value", function (snapshot) {
           var obj = snapshot.val();
           var rooms = Object.keys(obj);
-          rooms.forEach(function(something) {
+          console.log("try")
+          rooms.forEach(function (something) {
             var user = snapshot
               .child(something)
               .child(bdate)
@@ -392,7 +409,7 @@ var app = new Vue({
               .val();
             //console.log(something); // returns the loc node
             // post to bookings node if room is free at that time
-            if (user == "") {
+            if (user === "") {
               //availRoom.push(something);
               temp.free = something;
               //availRoom.push(temp);
@@ -428,17 +445,55 @@ var app = new Vue({
             .child(bdate)
             .update({ [btime]: bloc + " " + temp['free'] });
         });
+      //return this.getRegionfromLoc(bloc);
+      //});
     },
     // cancel bookings
     // will take in date, time, region, place (loc + room)
-    cancelBooking(bdate, btime, bregion, bplace){
+    cancelBooking(bdate, btime, bregion, bplace) {
       var len = bplace.length
-      var room = bplace.slice(len-3, len);
-      var location = bplace.slice(0, len-4);
+      var room = bplace.slice(len - 3, len);
+      var location = bplace.slice(4, len - 4);
+      var region = bplacce.slice(0, 3);
       // remove booking from user bookings node
       userRef.child("0").child("bookings").child(bdate).child(btime).remove();
       // set booking for that location, date and time under bookings node as free
       bookingsRef.child(bregion).child(location).child(room).child(bdate).child(btime).set("");
+    },
+    // takes in the location and returns the region loc is in
+    getRegionfromLoc: function (location) {
+      //return new Promise(function(resolve, reject){
+      var location = "Central Library";
+      var self = this;
+      //var final;
+      realtimeRef.once("value", function (snapshot) {
+        var obj = snapshot.val();
+        var reg = Object.keys(obj);
+        //console.log(region);
+        var theOne;
+        reg.forEach(function (reg) {
+          var obj = snapshot.child(reg).val();
+          //console.log(obj);
+          //var loc = Object.keys(obj);
+          //console.log(obj.hasOwnProperty(location));
+          if (obj.hasOwnProperty(location)) {
+            //console.log("THIS IS THE ONE "+region);
+            theOne = reg;
+            //self.region = region;
+            //console.log(this.region);
+            //return region;
+          }
+        });
+        //console.log(theOne);
+        self.region = theOne;
+        //final = theOne
+        //console.log(final);
+        //console.log(self.region);
+        return theOne;
+      });
+      //console.log(final.key);
+      //})
+
     },
   }
 });
