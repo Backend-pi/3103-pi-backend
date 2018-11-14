@@ -369,7 +369,7 @@ var app = new Vue({
     },
     // to be used when user makes a booking
     // takes in the user, date, time, location, region of booking
-    updateUserBooking(bdate, btime, bloc, bregion) {
+    makeBooking(bdate, btime, bloc, bregion) {
       var bdate = "15112018";
       var btime = "1400";
       var bloc = "Central Library";
