@@ -173,6 +173,8 @@ var app = new Vue({
         }
       }
       console.log(total);
+      this.occupancy = total;
+      //console.log(this.occupancy);
       return total;
       //var time = this.formatTime(date); //find the hour of the date object
       //var total = 0;
