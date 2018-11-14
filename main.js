@@ -86,10 +86,10 @@ var app = new Vue({
           openHangouts.forEach(function (openHangouts) {
             var val = openHangouts.val();
             var temp = [openHangouts.key, openHangouts.val()];
-            console.log(temp);
+            //console.log(temp);
             arr.push([openHangouts.key, openHangouts.val()]);
           });
-          console.log(arr);
+          //console.log(arr);
         });
       this.hangouts = arr;
       return arr;
