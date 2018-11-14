@@ -23,7 +23,8 @@ var app = new Vue({
       tempVal: "",
       myBookings: "", // users personal bookings
       bookings: "", // places that are available to show on html so user can choose which location they want
-      region: ""
+      regionLoc: "",
+      //regionBook: ""
       //databaseURL:
     };
   },
@@ -298,7 +299,10 @@ var app = new Vue({
               });
             }
           });
+          // remove bookings with date that is over
+          //openBookings
         });
+        console.log("passed: "+passed);
       this.myBookings = arr;
       return arr;
     },
@@ -387,7 +391,7 @@ var app = new Vue({
       var bdate = "15112018";
       var btime = "1400";
       var bloc = "Central Library";
-      var bregion = this.region;
+      var bregion = this.regionLoc;
       var self = this;
       //console.log(this.region);
       var availRoom = [];
@@ -400,7 +404,7 @@ var app = new Vue({
         .once("value", function (snapshot) {
           var obj = snapshot.val();
           var rooms = Object.keys(obj);
-          console.log("try")
+          //console.log("try")
           rooms.forEach(function (something) {
             var user = snapshot
               .child(something)
@@ -449,16 +453,18 @@ var app = new Vue({
       //});
     },
     // cancel bookings
-    // will take in date, time, region, place (loc + room)
-    cancelBooking(bdate, btime, bregion, bplace) {
+    // will take in date, time, place (region + loc + room)
+    cancelBooking(bdate, btime, bplace) {
+      //var bplace = "COM COM1 DR2";
       var len = bplace.length
       var room = bplace.slice(len - 3, len);
       var location = bplace.slice(4, len - 4);
-      var region = bplacce.slice(0, 3);
+      var region = this.getRegionfromBooking(bplace.slice(0, 3));
+      //console.log(region);
       // remove booking from user bookings node
       userRef.child("0").child("bookings").child(bdate).child(btime).remove();
       // set booking for that location, date and time under bookings node as free
-      bookingsRef.child(bregion).child(location).child(room).child(bdate).child(btime).set("");
+      bookingsRef.child(region).child(location).child(room).child(bdate).child(btime).set("");
     },
     // takes in the location and returns the region loc is in
     getRegionfromLoc: function (location) {
@@ -469,7 +475,7 @@ var app = new Vue({
       realtimeRef.once("value", function (snapshot) {
         var obj = snapshot.val();
         var reg = Object.keys(obj);
-        //console.log(region);
+        //console.log(reg);
         var theOne;
         reg.forEach(function (reg) {
           var obj = snapshot.child(reg).val();
@@ -485,7 +491,7 @@ var app = new Vue({
           }
         });
         //console.log(theOne);
-        self.region = theOne;
+        self.regionLoc = theOne;
         //final = theOne
         //console.log(final);
         //console.log(self.region);
@@ -494,6 +500,47 @@ var app = new Vue({
       //console.log(final.key);
       //})
 
+    },
+    getRegionfromBooking(location){
+      //var location = "GEN";
+      var text = "";
+      switch (location) {
+        case "ASS":
+          text = "Arts and Social Sciences";
+          break;
+        case "BIZ":
+          text = "Business";
+          break;
+        case "COM":
+          text = "Computing";
+          break;
+        case "DEN":
+          text = "Dentistry";
+          break;
+        case "SDE":
+          text = "Design and Environment";
+          break;
+        case "ENG":
+          text = "Engineering";
+          break;
+        case "GEN":
+          text = "General";
+          break;
+        case "MED":
+          text = "Medicine";
+          break;
+        case "MUS":
+          text = "Music";
+          break;
+        case "SCI":
+          text = "Science";
+          break;
+        default:
+          text = "Faculty";
+      }
+      //this.regionBook = text;
+      //console.log(this.regionBook);
+      return text;
     },
   }
 });
