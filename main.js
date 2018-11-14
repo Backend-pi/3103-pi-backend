@@ -7,7 +7,7 @@ var db = firebase
 var realtimeRef = db.ref("realtime");
 var forecastRef = db.ref("forecast");
 var bookingsRef = db.ref("bookings");
-var userRef = db.ref("user");
+var user = db.ref("user");
 var interval;
 
 var app = new Vue({
@@ -16,6 +16,7 @@ var app = new Vue({
     counter: 0,
     occupancy: [0],
     locations: ["Central Library", "Mac Commons", "Study Room 1"],
+    userName: "",
     hangouts: "",
     timeOn: true,
     tempVal: "",
@@ -67,13 +68,13 @@ var app = new Vue({
         .remove();
     },
     printData: function() {
-      this.hangouts = userRef.child("0").child("hangouts");
-      console.log(userRef.child("0").child("hangouts"));
+      this.hangouts = user.child("0").child("hangouts");
+      console.log(user.child("0").child("hangouts"));
     },
     // get data for hangouts pie chart
     get: function() {
       var arr = [];
-      userRef
+      user
         .child("0")
         .child("hangouts")
         .once("value", function(openHangouts) {
@@ -242,12 +243,12 @@ var app = new Vue({
       this.randomTime();
     },
     // retrieve data to get it to show on html
-    tempFn: function() { 
+    tempFn: function() {
       var temp = [];
       realtimeRef
         .child("General")
         .child("Central Library")
-        .child("discussion rooms")
+        .child("study rooms")
         .once("value", function(snapshot1) {
           temp.push(snapshot1.child("total").val());
           //console.log(snapshot1.child("total").val());
@@ -260,7 +261,7 @@ var app = new Vue({
     // retrieve user's bookings data and store it as dictionary for display on html
     displayBookings() {
       var arr = [];
-      userRef
+      user
         .child("0")
         .child("bookings")
         .once("value", function(openBookings) {
@@ -288,9 +289,10 @@ var app = new Vue({
       return arr;
     },
     // adds number of available disc rooms for booking to this.bookings
+    // used for showing how many rooms each location is avail to book
     bookingsAvail(userDate, userTime) {
       var userDate = "15112018";
-      var userTime = "1500";
+      var userTime = "1400";
       var arr = [];
       bookingsRef.once("value", function(openBookings) {
         // gets the region
@@ -339,11 +341,19 @@ var app = new Vue({
                   } */
                   // to use if each hour is stored, those without bookings are stored as ""
                   currTimeKey.forEach(function(time) {
-                    var value = openBookings.child(loc).child(room).child(day).child(time).val();
-                    //console.log(value); // "" or nusnetID
-                    if (value == ""){
-                      tempCount += 1;
-                      location = loc;
+                    if (time == userTime) {
+                      var value = openBookings
+                        .child(loc)
+                        .child(room)
+                        .child(userDate)
+                        .child(userTime)
+                        .val();
+                      //console.log(value); // "" or nusnetID
+                      // time is free -> store data!
+                      if (value == "") {
+                        tempCount += 1;
+                        location = loc;
+                      }
                     }
                   });
                 }
@@ -357,6 +367,67 @@ var app = new Vue({
       });
       this.bookings = arr;
     },
+    // to be used when user makes a booking
+    // takes in the user, date, time, location, region of booking
+    updateUserBooking(bdate, btime, bloc, bregion) {
+      var bdate = "15112018";
+      var btime = "1400";
+      var bloc = "Central Library";
+      var bregion = "General";
+      var self = this;
+      var availRoom = [];
+      var temp = {};
+      // retrieve available room from bloc
+      bookingsRef
+        .child(bregion)
+        .child(bloc)
+        .once("value", function(snapshot) {
+          var obj = snapshot.val();
+          var rooms = Object.keys(obj);
+          rooms.forEach(function(something) {
+            var user = snapshot
+              .child(something)
+              .child(bdate)
+              .child(btime)
+              .val();
+            //console.log(something); // returns the loc node
+            // post to bookings node if room is free at that time
+            if (user == "") {
+              //availRoom.push(something);
+              temp.free = something;
+              //availRoom.push(temp);
+              //console.log(availRoom);
+              bookingsRef
+                .child(bregion)
+                .child(bloc)
+                .child(something)
+                .child(bdate)
+                .update({
+                  [btime]: "" // E8646580
+                  //this.userName
+                });
+              //console.log(availRoom);
+              //{break;}
+              //this.myBookings = availRoom;
+            }
+            //availRoom.push(temp);
+            //console.log("this first" + availRoom);
+            //console.log("THIS second " + availRoom)
+          });
+          availRoom.push(temp);
+          //console.log(temp['free']);
+          //console.log(availRoom);
+          //console.log(self.myBookings);
+          self.myBookings = availRoom;
+          //console.log(self.myBookings);
+
+          // post to user node
+          user
+            .child("0")
+            .child("bookings")
+            .child(bdate)
+            .update({ [btime]: bloc + " " + temp['free'] });
+        });
+    },
   }
-  
 });
