@@ -126,32 +126,66 @@ var app = new Vue({
       var format_time = date.getHours().toString() + "00";
       return format_time;
     },
-    //occupancy: finds the no. of occupants in a given location, time and date
+    //occupied: finds the no. of occupants in a given location, time and date
     //formatDate: the date has been formated in the required form. Pass a date
     //object through formatDate before using this
-    occupied: function () {
+    occupied: async function(location, formatDate, time) {
       //uncommment below when testing
-      var location = "Central Library";
-      var formatDate = "26102018";
-      var time = 1600;
+      //location = "Central Library";
+      //formatDate = 13112018;
+      //time = 2100;
       var temp = [];
-      forecastRef
+      await forecastRef
         .child("General")
         .child(location)
         .child("study rooms")
         .child("Data")
         .child(formatDate)
         .child(time)
-        .once("value", function (snap) {
-          //console.log(snap.val());
+        .once("value", function(snap) {
           temp.push(snap.val());
-          console.log(temp);
+          //console.log(snap.val());
+          //console.log(temp);
         });
-      this.occupancy = temp;
-      console.log("outside");
-      console.log(temp);
-      //return temp[0];
+      //console.log("temp");
+      //console.log(await temp);
+      return temp;
     },
+
+    //forecasting model: the model takes in a string location, and a date object
+    forecast: async function(location, time) { //change to date, instead of time when done with testing
+      const date = new Date(2018, 11, 12, 22, 00, 30, 0);
+      var i;
+      var total = 0;
+      var time = 2200; //can be derived from date later on
+      for (i = 0; i < 4; i = i + 1) {
+        var tempDate = new Date();
+        await tempDate.setDate((await date.getDate()) - 7 * i);
+        console.log("tempDate: " + tempDate);
+        var formatedDate = await this.formatDate(tempDate);
+        console.log(formatedDate);
+        var num = await this.occupied(location, formatedDate, time);
+        console.log(num[0]);
+        total = total + num[0];
+        //console.log(total);
+        if (i==3) {
+          
+        }
+      }
+      console.log(total);
+      return total;
+      //var time = this.formatTime(date); //find the hour of the date object
+      //var total = 0;
+      //var curr_date;
+      //for (curr_date in dates) {
+      //console.log(curr_date)
+      //var num = await this.occupied(location, curr_date, 2200);
+      //console.log(num);
+      //total = total + this.occupancy;
+      //}
+      //var avg = total / 4;
+      //return avg;
+    }
     // generate random values, push current value from realtime to forecast, push new value to realtime
     createRandom: function () {
       var date = this.getTodayDate();
