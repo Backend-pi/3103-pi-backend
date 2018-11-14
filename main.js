@@ -296,10 +296,22 @@ var app = new Vue({
       //console.log(temp);
       //return temp;
     },
+    // increments number of hangouts in region by 1
+    addHangouts(region) {
+      //var region = "General";
+      userRef.child('0').child('hangouts').once('value', function (hosnapshot) {
+        var x = hosnapshot.child(region).val();
+        console.log(x);
+        x++;
+        console.log(x);
+        userRef.child('0').child('hangouts').update({ [region]: x });
+      });
+    },
     // retrieve user's bookings data and store it as dictionary for display on html
     displayBookings() {
+      const self = this;
       var arr = [];
-      var passed = [];
+      var passed = {};
       userRef
         .child("0")
         .child("bookings")
@@ -313,7 +325,17 @@ var app = new Vue({
             var now = new Date();
             now.setHours(0, 0, 0, 0);
             if (formatted < now) {
-              passed.push(date);
+              //passed.push(date);
+              //console.log(passed);
+              var loc = [];
+              var obj = openBookings.val();
+              var keys = Object.keys(obj);
+              keys.forEach(function (time) {
+                var place = openBookings.child(time).val();
+                var region = place.slice(0, 3);
+                loc.push(region);
+              });
+              passed[date] = loc;
               //console.log(passed);
             } else {
               var obj = openBookings.val();
@@ -333,16 +355,28 @@ var app = new Vue({
             }
           });
           // remove bookings with date that is over
-          //openBookings
+          //console.log("passed: " + passed);
+          var passedKeys = Object.keys(passed);
+          //console.log("yo: "+passedKeys);
+
+          passedKeys.forEach(function (pastDate) {
+            var code = passed[pastDate]
+            //console.log(passed[pastDate]);
+            code.forEach(function (regCode) {
+              var reg = self.getRegionfromBooking(regCode);
+              self.addHangouts(reg); // add to hangouts
+            });
+            // remove from bookings node
+            userRef.child('0').child('bookings').child(pastDate).remove();
+          });
         });
-        console.log("passed: "+passed);
       this.myBookings = arr;
       return arr;
     },
     // adds number of available disc rooms for booking to this.bookings
     // used for showing how many rooms each location is avail to book
     bookingsAvail(userDate, userTime) {
-      var userDate = "15112018";
+      var userDate = "13112018";
       var userTime = "1400";
       var arr = [];
       bookingsRef.once("value", function (openBookings) {
@@ -351,93 +385,94 @@ var app = new Vue({
           console.log(openBookings.val()); //Object {Central Library: Object}
           var obj = openBookings.val();
           var key = Object.keys(obj);
-          console.log(key); //["Central Library"]
+          console.log("location key " + key); //["Central Library"]
           // loop through each location
           var location = "";
           var tempCount = 0; // store the # of rooms available for each loc
           var temp = {};
-          key.forEach(function (loc) {
-            console.log(openBookings.child(loc).val()); //Object {DR1: Object, DR2: Object}
-            var rooms = openBookings.child(loc).val();
-            var roomKey = Object.keys(rooms);
-            console.log(roomKey); //["DR1", "DR2"]
-            // loop through each discussion room
-            roomKey.forEach(function (room) {
-              var currDate = openBookings
-                .child(loc)
+          //key.forEach(function (loc) {
+          //console.log(openBookings.child(loc).val()); //Object {DR1: Object, DR2: Object}
+          var rooms = openBookings.child(key).val();
+          var roomKey = Object.keys(rooms);
+          //console.log(roomKey); //["DR1", "DR2"]
+          // loop through each discussion room
+          roomKey.forEach(function (room) {
+            var currDate = openBookings
+              .child(key)
+              .child(room)
+              .val();
+            var storedDate = Object.keys(currDate);
+            //console.log(storedDate); //["15112018"]
+            // loop through each date
+            storedDate.forEach(function (day) {
+              var currTime = openBookings
+                .child(key)
                 .child(room)
+                .child(day)
                 .val();
-              var storedDate = Object.keys(currDate);
-              console.log(storedDate); //["15112018"]
-              // loop through each date
-              storedDate.forEach(function (day) {
-                var currTime = openBookings
-                  .child(loc)
-                  .child(room)
-                  .child(day)
-                  .val();
-                var currTimeKey = Object.keys(currTime);
-                console.log(currTimeKey); //["1500", "1600"]
-                console.log(day); //15112018
-                //console.log(typeof day); // string
-                if (day == userDate) {
-                  // if user wants this date, loop through the diff times of this date
-                  // check that for the time the user wants, the number of rooms available
-                  /*
-                  if (!(userTime in currTimeKey)) {
-                    // if that time is free
-                    // store the data!
-                    tempCount += 1;
-                    location = loc;
-                  } */
-                  // to use if each hour is stored, those without bookings are stored as ""
-                  currTimeKey.forEach(function (time) {
-                    if (time == userTime) {
-                      var value = openBookings
-                        .child(loc)
-                        .child(room)
-                        .child(userDate)
-                        .child(userTime)
-                        .val();
-                      //console.log(value); // "" or nusnetID
-                      // time is free -> store data!
-                      if (value == "") {
-                        tempCount += 1;
-                        location = loc;
-                      }
+              var currTimeKey = Object.keys(currTime);
+              //console.log(currTimeKey); //["1500", "1600"]
+              //console.log(day); //15112018
+              //console.log(typeof day); // string
+              if (day == userDate) {
+                // if user wants this date, loop through the diff times of this date
+                // check that for the time the user wants, the number of rooms available
+                /*
+                if (!(userTime in currTimeKey)) {
+                  // if that time is free
+                  // store the data!
+                  tempCount += 1;
+                  location = loc;
+                } */
+                // to use if each hour is stored, those without bookings are stored as ""
+                currTimeKey.forEach(function (time) {
+                  if (time == userTime) {
+                    var value = openBookings
+                      .child(key)
+                      .child(room)
+                      .child(userDate)
+                      .child(userTime)
+                      .val();
+                    //console.log(value); // "" or nusnetID
+                    // time is free -> store data!
+                    if (value == "") {
+                      tempCount += 1;
+                      location = key;
+                      console.log("the key: " + key)
                     }
-                  });
-                }
-              });
+                  }
+                });
+              }
             });
           });
-          temp.location = location;
-          temp.available = tempCount;
-          arr.push(temp);
+          if (location != '') {
+            temp.location = location[0];
+            temp.available = tempCount;
+            arr.push(temp);
+          }
         });
       });
+      //});
       this.bookings = arr;
     },
     // to be used when user makes a booking
-    // takes in the user, date, time, location, region of booking
-    makeBooking: function (bdate, btime, bloc, bregion) {
+    // takes in the user, date, time, location of booking
+    makeBooking: function (bdate, btime, bloc) {
       var bdate = "15112018";
       var btime = "1400";
       var bloc = "Central Library";
-      var bregion = this.regionLoc;
+      var bregion = this.regionLoc; // gets region from getRegionfromLoc function
       var self = this;
-      //console.log(this.region);
+      //console.log(this.regionLoc);
       var availRoom = [];
       var temp = {};
       // retrieve available room from bloc
-      //var bregion = //this.getRegionfromLoc(bloc).then(() => {
       bookingsRef
         .child(bregion)
         .child(bloc)
         .once("value", function (snapshot) {
           var obj = snapshot.val();
           var rooms = Object.keys(obj);
-          //console.log("try")
           rooms.forEach(function (something) {
             var user = snapshot
               .child(something)
@@ -449,7 +484,6 @@ var app = new Vue({
             if (user === "") {
               //availRoom.push(something);
               temp.free = something;
-              //availRoom.push(temp);
               //console.log(availRoom);
               bookingsRef
                 .child(bregion)
@@ -457,33 +491,23 @@ var app = new Vue({
                 .child(something)
                 .child(bdate)
                 .update({
-                  [btime]: "" // E8646580
+                  [btime]: "" // get userID and put here
                   //this.userName
                 });
-              //console.log(availRoom);
-              //{break;}
-              //this.myBookings = availRoom;
             }
-            //availRoom.push(temp);
-            //console.log("this first" + availRoom);
-            //console.log("THIS second " + availRoom)
           });
           availRoom.push(temp);
-          //console.log(temp['free']);
-          //console.log(availRoom);
-          //console.log(self.myBookings);
-          self.myBookings = availRoom;
-          //console.log(self.myBookings);
-
+          self.myBookings = availRoom; //{ "free": "DR1" }
+          //console.log(self.myBookings); // [Object]
+          // get region for booking
+          var region = self.getRegionCode(bregion);
           // post to user node
           userRef
             .child("0")
             .child("bookings")
             .child(bdate)
-            .update({ [btime]: bloc + " " + temp['free'] });
+            .update({ [btime]: region + " " + bloc + " " + temp['free'] });
         });
-      //return this.getRegionfromLoc(bloc);
-      //});
     },
     // cancel bookings
     // will take in date, time, place (region + loc + room)
@@ -534,7 +558,9 @@ var app = new Vue({
       //})
 
     },
-    getRegionfromBooking(location){
+    // takes in the location code and returns the location name
+    // eg: takes in GEN and returns General
+    getRegionfromBooking(location) {
       //var location = "GEN";
       var text = "";
       switch (location) {
@@ -568,12 +594,56 @@ var app = new Vue({
         case "SCI":
           text = "Science";
           break;
+        //default:
+        //  text = "Faculty";
+      }
+      //this.regionBook = text;
+      //console.log(this.regionBook);
+      //console.log(text);
+      return text;
+    },
+    // takes in the location name and returns the location code
+    // eg: takes in General and returns GEN
+    getRegionCode(region) {
+      //var region = "General";
+      var text = "";
+      switch (region) {
+        case "Arts and Social Sciences":
+          text = "ASS";
+          break;
+        case "Business":
+          text = "BIZ";
+          break;
+        case "Computing":
+          text = "COM";
+          break;
+        case "Dentistry":
+          text = "DEN";
+          break;
+        case "Design and Environment":
+          text = "SDE";
+          break;
+        case "Engineering":
+          text = "ENG";
+          break;
+        case "General":
+          text = "GEN";
+          break;
+        case "Medicine":
+          text = "MED";
+          break;
+        case "Music":
+          text = "MUS";
+          break;
+        case "Science":
+          text = "SCI";
+          break;
         default:
           text = "Faculty";
       }
       //this.regionBook = text;
-      //console.log(this.regionBook);
+      //console.log(text);
       return text;
-    },
+    }
   }
 });
