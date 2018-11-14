@@ -429,5 +429,16 @@ var app = new Vue({
             .update({ [btime]: bloc + " " + temp['free'] });
         });
     },
+    // cancel bookings
+    // will take in date, time, region, place (loc + room)
+    cancelBooking(bdate, btime, bregion, bplace){
+      var len = bplace.length
+      var room = bplace.slice(len-3, len);
+      var location = bplace.slice(0, len-4);
+      // remove booking from user bookings node
+      userRef.child("0").child("bookings").child(bdate).child(btime).remove();
+      // set booking for that location, date and time under bookings node as free
+      bookingsRef.child(bregion).child(location).child(room).child(bdate).child(btime).set("");
+    },
   }
 });
