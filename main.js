@@ -16,6 +16,7 @@ var app = new Vue({
   data() {
     return {
       counter: 0,
+      allregions: [],
       occupancy: 0,
       dailyOccupancy: 0,
       vacancy: 0,
@@ -107,6 +108,21 @@ var app = new Vue({
       this.hangouts = arr;
       return arr;
     },
+    
+    get_regions: async function() {
+      var regions = [];
+      var temp;
+      await forecastRef
+       .once("value", function(snap){
+         temp = snap.val();
+        })
+      for (var region in temp) {
+        regions.push(region);
+      }
+      this.allregions = regions;
+      return regions;
+    },
+    
     //update_data: helps store historical data for forecasting
     update_data: async function (region, location, date, time, pax) {
       //uncomment below when testing
