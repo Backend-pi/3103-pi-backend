@@ -18,6 +18,8 @@ var app = new Vue({
       counter: 0,
       occupancy: 0,
       vacancy: 0,
+      rec: 0, 
+      rec_vacancy: 0,
       forecastchart: [],
       opening: 0,
       closing: 0,
@@ -221,7 +223,7 @@ var app = new Vue({
       this.forecastchart = list;
     },
     
-    //used: finds the number of seats taken in realtime at a given region and location
+    //vacant: finds the number of vacant seats in realtime for a given region and location
     vacant: async function(region, location) {
       var temp = 0;
       await realtimeRef
@@ -249,6 +251,37 @@ var app = new Vue({
       //console.log(await temp);
       this.vacancy = temp;
       return temp;
+    },
+    
+    //Finds the place with the greatest number of vacant slots in a given region
+    recommend: async function(region) {
+      var locations = [];
+      await realtimeRef
+      .child(region)
+      .once("value", function(snap) {
+        //console.log(snap.val());
+        locations = snap.val();
+      });
+      var max = 0;
+      var most = [];
+      var location;
+      for (location in locations) {
+        //console.log(location);
+        var num = await this.vacant(region, location);
+        console.log(num);
+        if (num > max) {
+          max = num;
+          most = [];
+          most.push(location);
+         }
+        //else if (num == max){
+        //most.push(location);
+        //}
+      }
+      console.log(most);
+      console.log(max);
+      this.rec = most;
+      this.rec_vacancy = max;
     },
     
     // generate random values, push current value from realtime to forecast, push new 
