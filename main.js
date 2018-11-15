@@ -16,6 +16,7 @@ var app = new Vue({
     return {
       counter: 0,
       occupancy: 0,
+      usage: 0,
       forecastchart: [],
       opening: 0,
       closing: 0,
@@ -214,6 +215,36 @@ var app = new Vue({
       }
       console.log(list);
       this.forecastchart = list;
+    },
+    
+    //used: finds the number of seats taken in realtime at a given region and location
+    used: async function(region, location) {
+      var temp = 0;
+      await realtimeRef
+        .child(region)
+        .child(location)
+        .child("study rooms")
+        .child("total")
+        .once("value", function (snap) {
+          temp = snap.val();
+          console.log(temp);
+          //console.log(snap.val());
+        });
+
+      await realtimeRef
+        .child(region)
+        .child(location)
+        .child("study rooms")
+        .child("in use")
+        .once("value", function (snap) {
+          temp = temp - snap.val();
+          //console.log(snap.val());
+          console.log(temp);
+        });
+      console.log("temp");
+      //console.log(await temp);
+      this.usage = temp;
+      return temp;
     },
     
     // generate random values, push current value from realtime to forecast, push new 
