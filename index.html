@@ -65,6 +65,8 @@
           <column-chart :data="forecastchart"></column-chart>
 	<button @click="vacant('Computing', 'COM1')">Vacant</button>
           <p>Vacancies: {{vacancy}}</p>
+	<button @click="recommend('Computing')">Recommend</button>
+          <p>We recommend {{rec}}, which has/have {{rec_vacancy}} vacant slots.</p>
         </div>
 
         <div>
