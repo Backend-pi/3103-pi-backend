@@ -771,57 +771,45 @@ var app = new Vue({
     },
     // to be used when user makes a booking
     // takes in the user, date, time, location of booking
-    makeBooking: function (bdate, btime, bloc) {
-      var bdate = "15112018";
-      var btime = "1400";
-      var bloc = "Central Library";
-      var bregion = this.regionLoc; // gets region from getRegionfromLoc function
-      var self = this;
-      //console.log(this.regionLoc);
-      var availRoom = [];
-      var temp = {};
-      // retrieve available room from bloc
-      bookingsRef
-        .child(bregion)
-        .child(bloc)
-        .once("value", function (snapshot) {
-          var obj = snapshot.val();
-          var rooms = Object.keys(obj);
-          rooms.forEach(function (something) {
-            var user0 = snapshot
-              .child(something)
-              .child(bdate)
-              .child(btime)
-              .val();
-            //console.log(something); // returns the loc node
-            // post to bookings node if room is free at that time
-            if (user0 === "") {
-              //availRoom.push(something);
-              temp.free = something;
-              //console.log(availRoom);
-              bookingsRef
-                .child(bregion)
-                .child(bloc)
-                .child(something)
-                .child(bdate)
-                .update({
-                  [btime]: "" // get userID and put here
-                  //this.userName
-                });
+    // to be used when user makes a booking
+    // takes in the user, date, time, location of booking
+    // returns the location of booking made
+    makeBooking: async function(region, location, date, time, id) {
+      var rooms = [];
+      var chosen = "";
+      await bookingsRef
+        .child(region)
+        .child(location)
+        .once("value", function(snap) {
+          rooms = snap.val();
+        });
+
+      for (var room in rooms) {
+        if (chosen != "") {
+          break;
+        }
+        await bookingsRef
+          .child(region)
+          .child(location)
+          .child(room)
+          .child(date)
+          .child(time)
+          .once("value", function(snap) {
+            if (snap.val() == "") {
+              chosen = room;
+              return;
             }
           });
-          availRoom.push(temp);
-          self.myBookings = availRoom; //{ "free": "DR1" }
-          //console.log(self.myBookings); // [Object]
-          // get region for booking
-          var region = self.getRegionCode(bregion);
-          // post to user node
-          user
-            .child("0")
-            .child("bookings")
-            .child(bdate)
-            .update({ [btime]: region + " " + bloc + " " + temp['free'] });
-        });
+      }
+      await bookingsRef
+        .child(region)
+        .child(location)
+        .child(chosen)
+        .child(date)
+        .update({ [time]: id });
+
+      return chosen;
+      console.log(chosen);
     },
     // cancel bookings
     // will take in date, time, place (region + loc + room)
