@@ -16,7 +16,7 @@ var app = new Vue({
     return {
       counter: 0,
       occupancy: 0,
-      usage: 0,
+      vacancy: 0,
       forecastchart: [],
       opening: 0,
       closing: 0,
@@ -218,7 +218,7 @@ var app = new Vue({
     },
     
     //used: finds the number of seats taken in realtime at a given region and location
-    used: async function(region, location) {
+    vacant: async function(region, location) {
       var temp = 0;
       await realtimeRef
         .child(region)
@@ -243,7 +243,7 @@ var app = new Vue({
         });
       console.log("temp");
       //console.log(await temp);
-      this.usage = temp;
+      this.vacancy = temp;
       return temp;
     },
     
