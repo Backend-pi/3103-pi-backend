@@ -7,6 +7,7 @@ var db = firebase
 var realtimeRef = db.ref("realtime");
 var forecastRef = db.ref("forecast");
 var bookingsRef = db.ref("bookings");
+var rtDiscRef = db.ref("realtimeDiscussion");
 var userRef = db.ref("user");
 var interval;
 
@@ -359,6 +360,78 @@ var app = new Vue({
       this.tempVal = temp;
       //console.log(temp);
       //return temp;
+    },
+    // write to realtimeBookings node from bookings node
+    // when date = today and time = this hour
+    updateRealtime(){
+      // get curr date and time
+      var today = this.getTodayDate();
+      console.log(today);
+      var thisTime = this.getMyTime();
+      console.log(thisTime);
+      bookingsRef.once('value', function(openBookings){
+        // openBookings are the regions
+        var obj = openBookings.val();
+        var reg = Object.keys(obj);
+        //console.log(reg);
+        reg.forEach(function(region){
+          var obj2 = openBookings.child(region).val();
+          var loc = Object.keys(obj2);
+          //console.log(loc);
+          loc.forEach(function(location){ // doesn't loop now since each region only has one location
+            var obj3 = openBookings.child(region).child(location).val();
+            var rm = Object.keys(obj3);
+            //console.log(rm);
+            rm.forEach(function(room){
+              var obj4 = openBookings.child(region).child(location).child(room).val();
+              var dt = Object.keys(obj4);
+              //console.log(dt);
+              var bookedDates = [];
+              var updated = false;
+              dt.forEach(function(date){
+                var obj5 = openBookings.child(region).child(location).child(room).child(date).val();
+                var tm = Object.keys(obj5);
+                //console.log(tm);
+                //console.log(loc + " " + room + " " + updated);
+                if ((date == today)){
+                  var bookedTime = [];
+                  bookedDates.push(date);
+                  tm.forEach(function (time) {
+                    var user = openBookings.child(region).child(location).child(room).child(date).child(time).val();
+                    //console.log(user);
+                    if ((time == thisTime) && (user != "")) {
+                      if (time < 1000) {
+                        var newTime = '0' + time;
+                        rtDiscRef.child(region).child(location).child(room).update({ [newTime]: user });
+                        updated = true;
+                        bookedTime.push(newTime);
+                      } else {
+                        rtDiscRef.child(region).child(location).child(room).update({ [time]: user });
+                        updated = true;
+                        bookedTime.push(time);
+                      }
+                    }
+                    // if the time node does not exist
+                    else if ((updated === false) && !(time in bookedTime)) { // && !(date in bookedDates)
+                      //console.log("new condition " + loc + " " + room + " " + updated);
+                      rtDiscRef.child(region).child(location).child(room).update({ [thisTime]: "" });
+                      updated = true;
+                      //console.log("new condition " + loc + " " + room + " " + updated);
+                    }
+                  });
+                }
+                // if date node does not exist in the loc and room and updated is still false
+                // update node to be ""
+                else if((updated === false) && !(date in bookedDates)){
+                  rtDiscRef.child(region).child(location).child(room).update({ [thisTime]: "" });
+                  updated = true;
+                }
+              }); 
+              //console.log(loc + " " + room + " " + updated);
+            });
+          }); //console.log(region);
+        });
+      });
     },
     // increments number of hangouts in region by 1
     addHangouts(region) {
