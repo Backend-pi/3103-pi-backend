@@ -33,7 +33,10 @@ var app = new Vue({
       //databaseURL:
     };
   },
-  mounted() { this.getRegionfromLoc() },
+  mounted() { 
+    this.getRegionfromLoc();
+    this.updateRealtime();
+  },
   methods: {
     increment: function () {
       this.counter++;
