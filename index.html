@@ -49,10 +49,7 @@
           <p>Today's Date: {{formatDate(new Date())}}</p>
           <p>Three Weeks Ago: {{formatDate(new Date())}}</p>
           <p>Current Hour: {{formatTime(new Date())}}</p>
-          <button @click="forecast('Central Library', 2200)"> forecast </button>
-          <!--
-          <p>Forecast: {{(forecast("Central Library", 2200)).toString()}}</p>
-          -->
+	  <button @click="forecast('Central Library', new Date(2018, 11, 12, 22, 0, 30, 0))"> Forecast </button>
           <p> Forecast: {{ occupancy }} </p>
         </div>
 
