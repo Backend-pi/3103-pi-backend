@@ -17,6 +17,7 @@ var app = new Vue({
     return {
       counter: 0,
       occupancy: 0,
+      dailyOccupancy: 0,
       vacancy: 0,
       rec: 0, 
       rec_vacancy: 0,
@@ -146,6 +147,7 @@ var app = new Vue({
       //location = "Central Library";
       //formatDate = 13112018;
       //time = 2100;
+      //console.log("occupied now")
       var temp = [];
       await forecastRef
         .child(region)
@@ -157,11 +159,28 @@ var app = new Vue({
         .once("value", function(snap) {
           temp.push(snap.val());
           //console.log(snap.val());
-          //console.log(temp);
+          console.log(temp);
         });
       //console.log("temp");
-      //console.log(await temp);
+      //console.log(temp);
       return temp;
+    },
+    
+    //find the general occupancy rate for a given day
+    forecast_day: async function(region, location, date){
+      var open = await this.operatingHours(region, location, "open");
+      var close = await this.operatingHours(region, location, "close");
+      var total = 0;
+      var formatedDate = await this.formatDate(date);
+      for (var t = open; t <= close; t = t + 100){
+        //console.log(t);
+        var num = await this.forecast(region, location, date, t);
+        total = total + num;
+      }
+      //console.log(total);
+      //console.log(total/(close - open)*100);
+      this.dailyOccupancy = Math.floor(total / (close - open) * 100)
+      //return this.dailyOccupancy;
     },
 
     //forecasting model: the model takes in a string location and region,
