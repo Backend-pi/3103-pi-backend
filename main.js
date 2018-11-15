@@ -16,6 +16,7 @@ var app = new Vue({
     return {
       counter: 0,
       occupancy: 0,
+      forecastchart: [],
       opening: 0,
       closing: 0,
       locations: ["Central Library", "Mac Commons", "Study Room 1"],
