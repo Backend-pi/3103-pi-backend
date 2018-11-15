@@ -71,6 +71,8 @@
           <p>Disc Available: {{allDiscAvailable}}</p>
 	<button @click="forecast_day('General', 'Central Library',new Date(2018, 11, 12, 22, 0, 30, 0))">Daily Occupancy</button>
           <p>Daily Occupancy: {{dailyOccupancy}}</p>
+	<button @click="get_regions()">Get All Regions</button>
+          <p>Regions: {{allregions}}</p>
         </div>
 
         <div>
