@@ -366,37 +366,37 @@ var app = new Vue({
     },
     // write to realtimeBookings node from bookings node
     // when date = today and time = this hour
-    updateRealtime(){
+    updateRealtime() {
       // get curr date and time
       var today = this.getTodayDate();
       console.log(today);
       var thisTime = this.getMyTime();
       console.log(thisTime);
-      bookingsRef.once('value', function(openBookings){
+      bookingsRef.once('value', function (openBookings) {
         // openBookings are the regions
         var obj = openBookings.val();
         var reg = Object.keys(obj);
         //console.log(reg);
-        reg.forEach(function(region){
+        reg.forEach(function (region) {
           var obj2 = openBookings.child(region).val();
           var loc = Object.keys(obj2);
           //console.log(loc);
-          loc.forEach(function(location){ // doesn't loop now since each region only has one location
+          loc.forEach(function (location) { // doesn't loop now since each region only has one location
             var obj3 = openBookings.child(region).child(location).val();
             var rm = Object.keys(obj3);
             //console.log(rm);
-            rm.forEach(function(room){
+            rm.forEach(function (room) {
               var obj4 = openBookings.child(region).child(location).child(room).val();
               var dt = Object.keys(obj4);
               //console.log(dt);
               var bookedDates = [];
               var updated = false;
-              dt.forEach(function(date){
+              dt.forEach(function (date) {
                 var obj5 = openBookings.child(region).child(location).child(room).child(date).val();
                 var tm = Object.keys(obj5);
                 //console.log(tm);
                 //console.log(loc + " " + room + " " + updated);
-                if ((date == today)){
+                if ((date == today)) {
                   var bookedTime = [];
                   bookedDates.push(date);
                   tm.forEach(function (time) {
@@ -425,11 +425,11 @@ var app = new Vue({
                 }
                 // if date node does not exist in the loc and room and updated is still false
                 // update node to be ""
-                else if((updated === false) && !(date in bookedDates)){
+                else if ((updated === false) && !(date in bookedDates)) {
                   rtDiscRef.child(region).child(location).child(room).update({ [thisTime]: "" });
                   updated = true;
                 }
-              }); 
+              });
               //console.log(loc + " " + room + " " + updated);
             });
           }); //console.log(region);
@@ -439,12 +439,12 @@ var app = new Vue({
     // increments number of hangouts in region by 1
     addHangouts(region) {
       //var region = "General";
-      userRef.child('0').child('hangouts').once('value', function (hosnapshot) {
+      user.child('0').child('hangouts').once('value', function (hosnapshot) {
         var x = hosnapshot.child(region).val();
         console.log(x);
         x++;
         console.log(x);
-        userRef.child('0').child('hangouts').update({ [region]: x });
+        user.child('0').child('hangouts').update({ [region]: x });
       });
     },
     // retrieve user's bookings data and store it as dictionary for display on html
@@ -452,7 +452,7 @@ var app = new Vue({
       const self = this;
       var arr = [];
       var passed = {};
-      userRef
+      user
         .child("0")
         .child("bookings")
         .once("value", function (openBookings) {
@@ -507,7 +507,7 @@ var app = new Vue({
               self.addHangouts(reg); // add to hangouts
             });
             // remove from bookings node
-            userRef.child('0').child('bookings').child(pastDate).remove();
+            user.child('0').child('bookings').child(pastDate).remove();
           });
         });
       this.myBookings = arr;
@@ -653,7 +653,7 @@ var app = new Vue({
           // get region for booking
           var region = self.getRegionCode(bregion);
           // post to user node
-          userRef
+          user
             .child("0")
             .child("bookings")
             .child(bdate)
@@ -670,7 +670,7 @@ var app = new Vue({
       var region = this.getRegionfromBooking(bplace.slice(0, 3));
       //console.log(region);
       // remove booking from user bookings node
-      userRef.child("0").child("bookings").child(bdate).child(btime).remove();
+      user.child("0").child("bookings").child(bdate).child(btime).remove();
       // set booking for that location, date and time under bookings node as free
       bookingsRef.child(region).child(location).child(room).child(bdate).child(btime).set("");
     },
