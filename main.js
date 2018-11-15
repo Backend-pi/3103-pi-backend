@@ -151,13 +151,12 @@ var app = new Vue({
       //console.log(await temp);
       return temp;
     },
-
+    
     //forecasting model: the model takes in a string location, and a date object
-    forecast: async function(location, time) { //change to date, instead of time when done with testing
-      const date = new Date(2018, 11, 12, 22, 0, 30, 0);
+    forecast: async function(location, date) { 
       var i;
       var total = 0;
-      var time = 2200; //can be derived from date later on
+      var time = await this.formatTime(date); //time derived from date object
       for (i = 0; i < 4; i = i + 1) {
         var tempDate = new Date();
         await tempDate.setDate((await date.getDate()) - 7 * i);
@@ -169,23 +168,14 @@ var app = new Vue({
         total = total + num[0];
         //console.log(total)
       }
-      console.log(total);
-      this.occupancy = Math.floor(total/3);
-      //console.log(this.occupancy);
-      return total;
-      //var time = this.formatTime(date); //find the hour of the date object
-      //var total = 0;
-      //var curr_date;
-      //for (curr_date in dates) {
-      //console.log(curr_date)
-      //var num = await this.occupied(location, curr_date, 2200);
-      //console.log(num);
-      //total = total + this.occupancy;
-      //}
-      //var avg = total / 4;
-      //return avg;
+      total = Math.floor(total/3)
+      //console.log(total);
+      this.occupancy = total; //occupancy is used for displaying the return value on
+      return total;           //html, since the function return a promise object 
     },
-    // generate random values, push current value from realtime to forecast, push new value to realtime
+    
+    // generate random values, push current value from realtime to forecast, push new 
+    //value to realtime
     createRandom: function () {
       var date = this.getTodayDate();
       var time = this.getMyTime();
@@ -257,6 +247,7 @@ var app = new Vue({
       //var x = Math.floor(Math.random() * 100 + 1);
       //console.log(x);
     },
+    
     // timer to run random number generator
     randomTime: function () {
       if (this.timeOn) {
