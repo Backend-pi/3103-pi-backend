@@ -801,13 +801,23 @@ var app = new Vue({
             }
           });
       }
-      await bookingsRef
+      await bookingsRef //updating bookings node
         .child(region)
         .child(location)
         .child(chosen)
         .child(date)
         .update({ [time]: id });
 
+      var regionCode = this.getRegionCode(region);
+      var temp = regionCode + " " + location + " " +  chosen
+
+      await userRef //updating users node
+       .child(id)
+       .child("bookings")
+       .child(date)
+       .update({[time]: temp})
+
+      this.booked = chosen;
       return chosen;
       console.log(chosen);
     },
