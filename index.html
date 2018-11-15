@@ -49,8 +49,20 @@
           <p>Today's Date: {{formatDate(new Date())}}</p>
           <p>Three Weeks Ago: {{formatDate(new Date())}}</p>
           <p>Current Hour: {{formatTime(new Date())}}</p>
-	  <button @click="forecast('Central Library', new Date(2018, 11, 12, 22, 0, 30, 0))"> Forecast </button>
-          <p> Forecast: {{ occupancy }} </p>
+	  <button @click="operatingHours('General', 'Central Library', 'open')">
+            Operating Hours
+          </button>
+          <p>Central Library Opening Hours: {{opening}}</p>
+          <button @click="forecast('General','Central Library', new Date(2018, 11, 12, 22, 0, 30, 0),2200)">
+            Forecast
+          </button>
+          <p>Forecast: {{ occupancy }}</p>
+          <button
+            @click="display('General', 'Central Library', new Date(2018, 11, 12, 22, 0, 30, 0))"
+          >
+            Forecast Chart
+          </button>
+          <column-chart :data="forecastchart"></column-chart>
         </div>
 
         <div>
