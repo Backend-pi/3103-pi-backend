@@ -8,7 +8,7 @@ var realtimeRef = db.ref("realtime");
 var forecastRef = db.ref("forecast");
 var bookingsRef = db.ref("bookings");
 var rtDiscRef = db.ref("realtimeDiscussion");
-var user = db.ref("user");
+var userRef = db.ref("user");
 var interval;
 
 var app = new Vue({
