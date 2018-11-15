@@ -397,6 +397,66 @@ var app = new Vue({
       //console.log(temp);
       //return temp;
     },
+    // takes in a region name
+    // find the next nearest region that has discussion rooms available
+    nearestDiscRegion(currRegion){
+      var text = "";
+      switch (currRegion) {
+        case "Arts and Social Sciences":
+          text = "General"; // or computing?
+          break;
+        case "Business":
+          text = "Business";
+          break;
+        case "Computing":
+          text = "Computing";
+          break;
+        case "Dentistry":
+          text = "Science"; // or medicine?
+          break;
+        case "Design and Environment":
+          text = "General";
+          break;
+        case "Engineering":
+          text = "General";
+          break;
+        case "General":
+          text = "General";
+          break;
+        case "Medicine":
+          text = "Medicine";
+          break;
+        case "Music":
+          text = "General";
+          break;
+        case "Science":
+          text = "Science";
+          break;
+        default:
+          text = "General";
+      }
+      //console.log(text);
+      return text;
+    },
+    // takes in a region name, currTime
+    // find the number of disc room available
+    // assumes each region only has one location
+    numDiscAvail: async function(r, time){
+      var r = "Computing";
+      var time = "1400";
+      var finalNum;
+      var loc;
+      await rtDiscRef.child(r).once('value', function(snap){
+        var obj = snap.val();
+        loc = Object.keys(obj);
+      });
+      console.log(loc);
+      rtDiscRef.child(r).child(loc).once('value', function(snap){
+        // continue on from here
+      });
+    },
+    // recommendation algo for discussion rooms
+    recomDisc(){},
     // write to realtimeBookings node from bookings node
     // when date = today and time = this hour
     updateRealtime() {
