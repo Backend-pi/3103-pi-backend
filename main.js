@@ -625,14 +625,14 @@ var app = new Vue({
           var obj = snapshot.val();
           var rooms = Object.keys(obj);
           rooms.forEach(function (something) {
-            var user = snapshot
+            var user0 = snapshot
               .child(something)
               .child(bdate)
               .child(btime)
               .val();
             //console.log(something); // returns the loc node
             // post to bookings node if room is free at that time
-            if (user === "") {
+            if (user0 === "") {
               //availRoom.push(something);
               temp.free = something;
               //console.log(availRoom);
