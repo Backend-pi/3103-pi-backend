@@ -63,6 +63,8 @@
             Forecast Chart
           </button>
           <column-chart :data="forecastchart"></column-chart>
+	<button @click="used('Computing', 'COM1')">Used</button>
+          <p>Usage: {{usage}}</p>
         </div>
 
         <div>
