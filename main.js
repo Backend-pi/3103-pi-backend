@@ -23,6 +23,8 @@ var app = new Vue({
       forecastchart: [],
       opening: 0,
       closing: 0,
+      discAvailable: [],
+      allDiscAvailable: [],
       locations: ["Central Library", "Mac Commons", "Study Room 1"],
       userName: "",
       hangouts: "",
@@ -441,22 +443,55 @@ var app = new Vue({
     // takes in a region name, currTime
     // find the number of disc room available
     // assumes each region only has one location
-    numDiscAvail: async function(r, time){
-      var r = "Computing";
-      var time = "1400";
+    discAvail: async function(region, location, time){
+      //var region = "Computing";
+      //var time = "1400";
       var finalNum;
-      var loc;
-      await rtDiscRef.child(r).once('value', function(snap){
-        var obj = snap.val();
-        loc = Object.keys(obj);
-      });
-      console.log(loc);
-      rtDiscRef.child(r).child(loc).once('value', function(snap){
-        // continue on from here
-      });
+      var discRooms = [];
+      var available = [];
+      await rtDiscRef
+       .child(region)
+       .child(location)
+       .once('value', function(snap){
+          discRooms = snap.val();
+          //location = Object.keys(obj);
+        });
+      for (var disc in discRooms) {
+        await rtDiscRef
+          .child(region)
+          .child(location)
+          .child(disc)
+          .child(time)
+          .once('value', function(snap){
+            if (snap.val()==""){
+              available.push(disc);
+              console.log(available);
+            }
+          })
+      }
+      this.discAvailable = available;
+      return available;
     },
     // recommendation algo for discussion rooms
-    recomDisc(){},
+    recomDisc: async function(region, time){
+      region = await this.nearestDiscRegion(region);
+      var locations;
+      var avail = [];
+
+      await rtDiscRef
+      .child(region)
+      .once("value", function(snap){
+        locations = snap.val();
+      })
+
+      for (var location in locations){
+        var temp = await this.discAvail(region, location, time);
+        avail.push({[location]: temp});
+      }
+      this.allDiscAvailable = avail;
+      console.log(this.allDiscAvailable)
+      return avail;
+    },
     // write to realtimeBookings node from bookings node
     // when date = today and time = this hour
     updateRealtime() {
