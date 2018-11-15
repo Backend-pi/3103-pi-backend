@@ -16,6 +16,8 @@ var app = new Vue({
     return {
       counter: 0,
       occupancy: 0,
+      opening: 0,
+      closing: 0,
       locations: ["Central Library", "Mac Commons", "Study Room 1"],
       userName: "",
       hangouts: "",
@@ -95,14 +97,14 @@ var app = new Vue({
       return arr;
     },
     //update_data: helps store historical data for forecasting
-    update_data: async function (location, date, time, pax) {
+    update_data: async function (region, location, date, time, pax) {
       //uncomment below when testing
       //var location = "Central Library"
       //var date = "26102018"
       //var pax = 500
       //var time = 1700
       forecastRef
-        .child("General")
+        .child(region)
         .child(location)
         .child("study rooms")
         .child("Data")
@@ -129,14 +131,14 @@ var app = new Vue({
     //occupied: finds the no. of occupants in a given location, time and date
     //formatDate: the date has been formated in the required form. Pass a date
     //object through formatDate before using this
-    occupied: async function(location, formatDate, time) {
+    occupied: async function(region, location, formatDate, time) {
       //uncommment below when testing
       //location = "Central Library";
       //formatDate = 13112018;
       //time = 2100;
       var temp = [];
       await forecastRef
-        .child("General")
+        .child(region)
         .child(location)
         .child("study rooms")
         .child("Data")
@@ -151,27 +153,66 @@ var app = new Vue({
       //console.log(await temp);
       return temp;
     },
-    
-    //forecasting model: the model takes in a string location, and a date object
-    forecast: async function(location, date) { 
+
+    //forecasting model: the model takes in a string location and region,
+    //and a date object
+    forecast: async function(region, location, date, time) {
       var i;
       var total = 0;
-      var time = await this.formatTime(date); //time derived from date object
+      //var time = await this.formatTime(date); //time derived from date object
       for (i = 0; i < 4; i = i + 1) {
         var tempDate = new Date();
         await tempDate.setDate((await date.getDate()) - 7 * i);
         console.log("tempDate: " + tempDate);
         var formatedDate = await this.formatDate(tempDate);
         console.log(formatedDate);
-        var num = await this.occupied(location, formatedDate, time);
+        var num = await this.occupied(region, location, formatedDate, time);
         console.log(num[0]);
         total = total + num[0];
         //console.log(total)
       }
-      total = Math.floor(total/3)
+      total = Math.floor(total / 3);
       //console.log(total);
       this.occupancy = total; //occupancy is used for displaying the return value on
-      return total;           //html, since the function return a promise object 
+      return total; //html, since the function return a promise object
+    },
+
+    // takes in a string location and
+    // a string region and
+    // a string parameter called end (accepted values: open/close)
+    // for retrieval of opening/closing hours
+    operatingHours: async function(region, location, end) {
+      var temp = [];
+      await forecastRef
+        .child(region)
+        .child(location)
+        .child(end)
+        .once("value", function(snap) {
+          temp.push(snap.val());
+          //console.log(snap.val());
+          //console.log(temp);
+        });
+      if (end === "open") {
+        this.opening = temp[0];
+      } else if (end === "close") {
+        this.closing = temp[0];
+      }
+      console.log(temp[0]);
+      return temp[0];
+    },
+
+    display: async function(region, location, date) {
+      var open = await this.operatingHours(region, location, "open");
+      var close = await this.operatingHours(region, location, "close");
+      var list = [];
+      var time;
+
+      for (time = open; time <= close; time = time + 100) {
+        var num = await this.forecast(region, location, date, time);
+        list.push([time, num]);
+      }
+      console.log(list);
+      this.forecastchart = list;
     },
     
     // generate random values, push current value from realtime to forecast, push new 
