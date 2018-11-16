@@ -17,6 +17,7 @@ var app = new Vue({
     return {
       counter: 0,
       allregions: [],
+      allLocations: [],
       occupancy: 0,
       dailyOccupancy: 0,
       vacancy: 0,
@@ -121,6 +122,26 @@ var app = new Vue({
       }
       this.allregions = regions;
       return regions;
+    },
+    
+    get_locations: async function () {
+      var locations = [];
+      var temp;
+      await this.get_regions();
+      var size = this.allregions.length;
+      for (var i = 0; i < size; i++) {
+        var region = this.allregions[i];
+        await forecastRef.child(region)
+          .once("value", function (snap) {
+            temp = snap.val();
+          })
+        for (var reg in temp) {
+          locations.push(reg);
+        }
+      }
+      this.allLocations = locations;
+      console.log(this.allLocations);
+      return locations;
     },
     
     //update_data: helps store historical data for forecasting
